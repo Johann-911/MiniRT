@@ -39,7 +39,7 @@ void draw_image(t_app *app)
         y++;
     }
 }
-   
+
 void	fill_gradient(t_app *app)
 {
     int x, y;
@@ -65,7 +65,7 @@ void	fill_gradient(t_app *app)
     mlx_put_image_to_window(app->mlx, app->win, app->img, 0, 0);
 }
 
-/* key handler (KeyPress) */
+
 int	handle_key(int keycode, void *param)
 {
     (void)param;
@@ -74,7 +74,7 @@ int	handle_key(int keycode, void *param)
     return (0);
 }
 
-/* window close (red cross) */
+
 int	handle_close(void *param)
 {
     (void)param;
@@ -82,21 +82,14 @@ int	handle_close(void *param)
     return (0);
 }
 
-int handle_mouse(int button, int x, int y, void *param)
-{
-    (void)x; (void)y; (void)param;
-    if (button == 4)
-        /* scroll up */ ;
-    else if (button == 5)
-		return (0);
-}
+
 
 int	main(void)
 {
     t_app app;
 
-    app.width = 800;
-    app.height = 600;
+    app.width = WIDTH;
+    app.height = HEIGHT;
     app.mlx = mlx_init();
     if (!app.mlx)
     {
@@ -118,7 +111,6 @@ int	main(void)
     fill_gradient(&app);
     mlx_hook(app.win, 2, 1L<<0, handle_key, &app);
     mlx_hook(app.win, 17, 0, handle_close, &app);
-    mlx_mouse_hook(app.win, handle_mouse, &app);
     mlx_loop(app.mlx);
     return (0);
 }
