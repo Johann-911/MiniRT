@@ -1,6 +1,8 @@
 #ifndef RT_MATH_H
 # define RT_MATH_H
 
+#include <math.h>
+
 typedef struct s_vec3
 {
 	double x;
