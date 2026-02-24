@@ -1,4 +1,6 @@
 #include "../inc/window.h"
+#include "../inc/parser.h"
+#include <fcntl.h>
 
 void	put_pixel(char *data, int x, int y, int color, int bpp, int line)
 {
@@ -85,9 +87,18 @@ int	handle_close(void *param)
 	return (0);
 }
 
-int	main(void)
+int	main(int ac, char **av)
 {
 	t_app app;
+	int fd;
+
+	if (ac != 2)
+		return (perror("Wrong Usage. ./miniRT <input_file.rt>"), 1);
+	fd = open(av[1], O_RDONLY);
+	if (!validate(fd))
+		return (close(fd), perror("Error"), 1);
+	close(fd);
+
 
 	app.width = WIDTH;
 	app.height = HEIGHT;

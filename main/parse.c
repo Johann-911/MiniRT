@@ -6,11 +6,13 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/02/24 16:21:37 by stliu            ###   ########.fr       */
+/*   Updated: 2026/02/24 18:10:15 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../inc/window.h"
 #include "../inc/parser.h"
+#include <fcntl.h>
 
 
 /*
@@ -61,3 +63,20 @@ Cylinder:
 - cylinder height
 - RBG: 255
 */
+
+
+int validate(int fd)
+{
+    char    *line;
+
+    if (fd < 0)
+        return (0);
+    line = get_next_line(fd);
+    while (line != NULL)
+    {
+        line = get_next_line(fd);
+        printf("%s", line);
+        free(line);
+    }
+    return (1);
+}
