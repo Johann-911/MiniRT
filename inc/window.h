@@ -1,3 +1,7 @@
+#ifndef WINDOW_H
+#define WINDOW_H
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "../minilibx-linux/mlx.h"
@@ -13,8 +17,8 @@ typedef struct s_app
     int height;
 }	t_app;
 
-# define HEIGHT 500
-# define WIDTH 500
+# define HEIGHT 1000
+# define WIDTH 1200
 #define KEY_ESC 65307
 
 void	put_pixel(char *data, int x, int y, int color, int bpp, int line);
@@ -24,3 +28,4 @@ int	handle_mouse(int button, int x, int y, void *param);
 int	handle_close(void *param);
 void recreate_image_and_draw(t_app *app);
 
+#endif
