@@ -12,47 +12,40 @@ typedef struct s_vec3
 
 typedef struct s_rgb
 {
-	double r;
-	double g;
-	double b;
+	int r;
+	int g;
+	int b;
 }t_rgb;
 
 typedef struct s_sphere
 {
-	double x;
-	double y;
-	double z;
+	t_vec3	center;
 	double r;
 	t_rgb color;
 }t_sphere;
 
 typedef struct s_plane
 {
-	double x;
-	double y;
-	double z;
-	t_vec3 vector;
+	t_vec3	point;
+	t_vec3 normal;
 	t_rgb color;
 }t_plane;
 
 typedef struct s_cylinder
 {
-	double x;
-	double y;
-	double z;
+	t_vec3 center;
 	t_vec3 vector;
-	double dia;
+	double radius;
 	double height;
 	t_rgb color;
 }t_cylinder;
 
 typedef struct s_light
 {
-	double x;
-	double y;
-	double z;
-	float 	b;
+	t_vec3 pos;
+	double 	b;
 	t_rgb color;
+	struct s_light *next;
 }t_light;
 
 
@@ -63,6 +56,21 @@ typedef union u_objects
 	t_cylinder	cylinder;
 }t_objects;
 
+typedef enum e_obj_type
+{
+	OBJ_PLANE,
+	OBJ_SPHERE,
+	OBJ_CYLINDER
+}t_obj_type;
+
+typedef struct s_object
+{
+	t_obj_type	type;
+	t_objects	data;
+	struct s_object *next;
+}	t_object;
+
+
 typedef struct s_ambient
 {
 	double ratio;
@@ -71,19 +79,21 @@ typedef struct s_ambient
 
 typedef struct s_camera
 {
-	double x;
-	double y;
-	double z;
+	t_vec3 origin;
 	t_vec3 vector;
-	float fov;
+	double fov;
 }t_camera;
 
 typedef struct s_scene
 {
 	t_ambient ambient;
 	t_camera  camera;
-	t_light		light;
-	t_objects	objects;
+	t_light		*light;
+	t_object	*objects;
+	int			nb_lights;
+    int			nb_objects;
+    int			has_ambient;
+    int			has_camera;
 }t_scene;
 
 t_vec3 vec3(double x, double y, double z);
