@@ -3,6 +3,13 @@
 
 #include <math.h>
 
+
+typedef struct s_list
+{
+	void			*content;
+	struct s_list	*next;
+}t_list;
+
 typedef struct s_vec3
 {
 	double x;
@@ -20,15 +27,15 @@ typedef struct s_rgb
 typedef struct s_sphere
 {
 	t_vec3	center;
-	double r;
-	t_rgb color;
+	double 	r;
+	t_rgb 	color;
 }t_sphere;
 
 typedef struct s_plane
 {
 	t_vec3	point;
-	t_vec3 normal;
-	t_rgb color;
+	t_vec3 	normal;
+	t_rgb 	color;
 }t_plane;
 
 typedef struct s_cylinder
@@ -39,6 +46,23 @@ typedef struct s_cylinder
 	double height;
 	t_rgb color;
 }t_cylinder;
+
+typedef struct s_triangle
+{
+	t_vec3	x;
+	t_vec3	y;
+	t_vec3	z;
+	t_rgb	color;
+}t_triangle;
+
+typedef struct s_cone
+{
+	t_vec3	tip;
+	t_vec3	axis;
+	double	radius;
+	double	height;
+	t_rgb	color;
+}t_cone;
 
 typedef struct s_light
 {
@@ -54,13 +78,17 @@ typedef union u_objects
 	t_plane		plane;
 	t_sphere	sphere;
 	t_cylinder	cylinder;
+	t_cone		cone;
+	t_triangle	triangle;
 }t_objects;
 
 typedef enum e_obj_type
 {
 	OBJ_PLANE,
 	OBJ_SPHERE,
-	OBJ_CYLINDER
+	OBJ_CYLINDER,
+	OBJ_CONE,
+	OBJ_TRIANGLE
 }t_obj_type;
 
 typedef struct s_object
