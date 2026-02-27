@@ -1,0 +1,11 @@
+# build / editor
+build/
+*.o
+*.a
+*.so
+*.swp
+.DS_Store
+
+# minilibx build dir and any nested git metadata
+minilibx-linux/
+GNL/.git
