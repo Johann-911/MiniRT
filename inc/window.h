@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "../minilibx-linux/mlx.h"
 #include <X11/Xlib.h>
+#include "../Printf/ft_printf.h"
 
 
 typedef struct s_app 

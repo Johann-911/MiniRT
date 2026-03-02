@@ -16,9 +16,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "../GetNextLine/get_next_line.h"
+#include "../GNL/get_next_line.h"
+#include "rt_math.h"
 
 
-int validate(int fd);
+
+int validate(int fd, t_scene *scene);
+
+int parse_file(const char *path, t_scene *scene);
+int check_line(char *line, t_scene *scene);
+
+
+//	helpers	// 
+int valid_ident(char *ident, t_scene *scene);
+int ft_isspace(char c);
+int valid_ambient(char *line, t_scene *scene);
+int valid_camera(char *line, t_scene *scene);
+int valid_light(char *line, t_scene *scene);
+int valid_sphere(char *line, t_scene *scene);
+int valid_plane(char *line, t_scene *scene);
+int valid_cylinder(char *line, t_scene *scene);
+int valid_cone(char *line, t_scene *scene);
+
+
+
 
 #endif

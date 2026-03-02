@@ -76,7 +76,7 @@ cy 50.0,0.0,20.6 0,0,1.0 14.2 21.42 10,0,255
 
 */
 
-int validate(int fd)
+int validate(int fd, t_scene *scene)
 {
     char    *line;
 
@@ -99,74 +99,75 @@ int ft_isspace(char c)
     return (0);
 }
 
-int valid_ident(char *ident)
+int valid_ident(char *ident, t_scene *scene)
 {
     if (!ident)
-        return (0);
+        return (1);
     if (ft_strncmp(ident, "A", 2) == 0)
-        return (1);
+    {
+        if(!valid_ambient(ident, scene))
+            return 1;
+    }
     if (ft_strncmp(ident, "C", 2) == 0)
-        return (1);
+        return (0);
     if (ft_strncmp(ident, "L", 2) == 0)
-        return (1);
+        return (0);
     if (ft_strncmp(ident, "sp", 3) == 0)
-        return (1);
+        return (0);
     if (ft_strncmp(ident, "pl", 3) == 0)
-        return (1);
+        return (0);
     if (ft_strncmp(ident, "cy", 3) == 0)
-        return (1);
+        return (0);
     if (ft_strncmp(ident, "co", 3) == 0)
-        return (1);
+        return (0);
     if (ft_strncmp(ident, "tr", 3) == 0)
-        return (1);
-    return (0);
+        return (0);
+    return (1);
 }
 
-int check_line(char *line)
+int check_line(char *line, t_scene *scene)
 {
     int i = 0;
-    while(line[i] != '\n')
+    while(line[i] && line[i] != '\n')
     {
-        if (ft_isspace(line[i]))
+        while(ft_isspace(line[i]))
             i++;
-        if (valid_ident(line[i]))
-            return (1);
-        else if (valid_ident(line[i]))
-            return 0;
-        i++;  
+        if(!valid_ident(&line[i], scene))
+            return 1;
+        i++;
     }
     return 0;
 }
 
-int valid_ambient(char *line)
+int valid_ambient(char *line, t_scene *scene)
 {
     
 }
 
-int valid_camera(char *line)
+int valid_camera(char *line, t_scene *scene)
 {
     
 }
 
-int valid_light(char *line)
+int valid_light(char *line, t_scene *scene)
 {
     
 }
 
-int valid_sphere(char *line)
+int valid_sphere(char *line, t_scene *scene)
 {
     
 }
 
-int valid_plane(char *line)
+int valid_plane(char *line, t_scene *scene)
 {
     
 }
-int valid_cylinder(char *line)
+int valid_cylinder(char *line, t_scene *scene)
 {
     
 }
-int valid_cone(char *line)
+int valid_cone(char *line, t_scene *scene)
 {
     
 }
