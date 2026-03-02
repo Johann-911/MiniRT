@@ -66,7 +66,7 @@ char	*get_next_line(int fd)
 
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FOPEN_MAX)
-		return (buffer[fd][0] = '0' NULL);
+		return (buffer[fd][0] = '0', NULL);
 	while (1)
 	{
 		if (buffer[fd][0] == '\0')

@@ -28,8 +28,8 @@ int		build_line(char **line, char *buffer);
 void	read_file(char *buffer, int fd);
 char	*get_next_line(int fd);
 void	update_buffer(char *buffer);
-size_t	ft_strlen(char *str);
-char	*ft_substr(char *s, unsigned int start, size_t len);
-char	*ft_strjoin(char *s1, char *s2);
+size_t	ft_strlen_gnl(char *str);
+// char	*ft_substr_gnl(char *s, unsigned int start, size_t len);
+char	*ft_strjoin_gnl(char *s1, char *s2);
 
 #endif
