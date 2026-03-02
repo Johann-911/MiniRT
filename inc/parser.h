@@ -37,6 +37,7 @@ int valid_sphere(char *line, t_scene *scene);
 int valid_plane(char *line, t_scene *scene);
 int valid_cylinder(char *line, t_scene *scene);
 int valid_cone(char *line, t_scene *scene);
+double	ft_atod(const char *str);
 
 
 

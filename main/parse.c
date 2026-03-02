@@ -81,15 +81,19 @@ int validate(int fd, t_scene *scene)
     char    *line;
 
     if (fd < 0)
-        return (0);
+        return (1);
     line = get_next_line(fd);
     while (line != NULL)
     {
-        printf("%s", line);
+        if(check_line(line, scene))
+        {
+            free(line);
+            return 1;
+        }
         free(line);
         line = get_next_line(fd);
     }
-    return (1);
+    return (0);
 }
 
 int ft_isspace(char c)
@@ -98,50 +102,61 @@ int ft_isspace(char c)
         return (1);
     return (0);
 }
-
 int valid_ident(char *ident, t_scene *scene)
 {
     if (!ident)
         return (1);
-    if (ft_strncmp(ident, "A", 2) == 0)
-    {
-        if(!valid_ambient(ident, scene))
-            return 1;
-    }
-    if (ft_strncmp(ident, "C", 2) == 0)
-        return (0);
-    if (ft_strncmp(ident, "L", 2) == 0)
-        return (0);
-    if (ft_strncmp(ident, "sp", 3) == 0)
-        return (0);
-    if (ft_strncmp(ident, "pl", 3) == 0)
-        return (0);
-    if (ft_strncmp(ident, "cy", 3) == 0)
-        return (0);
-    if (ft_strncmp(ident, "co", 3) == 0)
-        return (0);
-    if (ft_strncmp(ident, "tr", 3) == 0)
-        return (0);
+    if (ft_strncmp(ident, "A", 1) == 0 && ft_isspace(ident[1]))
+        return (valid_ambient(ident, scene));
+    if (ft_strncmp(ident, "C", 1) == 0 && ft_isspace(ident[1]))
+        return (valid_camera(ident, scene));
+    if (ft_strncmp(ident, "L", 1) == 0 && ft_isspace(ident[1]))
+        return (valid_light(ident, scene));
+    if (ft_strncmp(ident, "sp", 2) == 0 && ft_isspace(ident[2]))
+        return (valid_sphere(ident, scene));
+    if (ft_strncmp(ident, "pl", 2) == 0 && ft_isspace(ident[2]))
+        return (valid_plane(ident, scene));
+    if (ft_strncmp(ident, "cy", 2) == 0 && ft_isspace(ident[2]))
+        return (valid_cylinder(ident, scene));
     return (1);
 }
 
 int check_line(char *line, t_scene *scene)
 {
-    int i = 0;
-    while(line[i] && line[i] != '\n')
-    {
-        while(ft_isspace(line[i]))
-            i++;
-        if(!valid_ident(&line[i], scene))
-            return 1;
+    int i;
+
+    i = 0;
+    while (ft_isspace(line[i]))
         i++;
-    }
-    return 0;
+    if (line[i] == '\0' || line[i] == '\n')
+        return (0);
+    return (valid_ident(&line[i], scene));
 }
 
 int valid_ambient(char *line, t_scene *scene)
 {
+    int i;
     
+    i = 1;
+    while (ft_isspace(line[i]))
+        i++;
+    scene->ambient.ratio = ft_atod(&line[i]);
+    while (line[i] && !ft_isspace(line[i]))
+        i++;
+    while (ft_isspace(line[i]))
+        i++;
+    scene->ambient.color.r = ft_atoi(&line[i]);
+    while (line[i] && line[i] != ',')
+        i++;
+    if (line[i] == ',')
+        i++;
+    scene->ambient.color.g = ft_atoi(&line[i]);
+    while (line[i] && line[i] != ',')
+        i++;
+    if (line[i] == ',')
+        i++;
+    scene->ambient.color.b = ft_atoi(&line[i]);
+    return (0);
 }
 
 int valid_camera(char *line, t_scene *scene)
