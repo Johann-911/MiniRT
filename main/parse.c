@@ -6,13 +6,14 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/04 13:26:18 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/04 13:51:44 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/window.h"
 #include "../inc/parser.h"
 #include <fcntl.h>
+#include "../inc/rt_math.h"
 
 
 /*
@@ -73,13 +74,13 @@ pl 0,0,0 0,1.0,0 255,0,225
 sp 0,0,20 20 255,0,0
 cy 50.0,0.0,20.6 0,0,1.0 14.2 21.42 10,0,255
 
-
-typedef struct s_camera
+typedef struct s_light
 {
-	t_vec3 origin;
-	t_vec3 vector;
-	double fov;
-}t_camera;
+	t_vec3 pos;
+	double 	b;
+	t_rgb color;
+	struct s_light *next;
+}t_light;
 
 */
 
@@ -175,17 +176,15 @@ int valid_camera(char *line, t_scene *scene)
     tokens = ft_split(line, ' ');
     if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
         return (free_split(tokens), 1);
-    if (ft_strcmp(tokens[0], "C") != 0)
-        return (0);
     cords = ft_split(tokens[1], ',');
     if (!cords || !cords[0] || !cords[1] || !cords[2])
-        return (free_split(cords), free_split(tokens));
+        return (free_split(cords), free_split(tokens), 1);
     scene->camera.origin.x = ft_atod(cords[0]);
     scene->camera.origin.y = ft_atod(cords[1]);
     scene->camera.origin.z = ft_atod(cords[2]);
     vector = ft_split(cords[2], ',');
     if (!vector || !vector[0] || !vector[1] || !vector[2])
-        return (free_split(vector), free_split(cords), free_split(tokens));
+        return (free_split(vector), free_split(cords), free_split(tokens), 1);
     scene->camera.vector.x = ft_atod(vector[0]);
     scene->camera.vector.x = ft_atod(vector[1]);
     scene->camera.vector.x = ft_atod(vector[2]);
@@ -197,11 +196,49 @@ int valid_camera(char *line, t_scene *scene)
     if (scene->camera.fov < 0 || scene->camera.fov > 180)
         return (free_split(tokens), 1);
     free_split(tokens);
-    return 0;
+    return (0);
 }
+
+typedef struct s_light
+{
+	t_vec3 pos;
+	double 	b;
+	t_rgb color;
+	struct s_light *next;
+}t_light;
 
 int valid_light(char *line, t_scene *scene)
 {
+    char **tokens;
+    char **coords;
+    char **color;
+    
+    tokens = ft_split(line, ' ');
+    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
+        return (free_split(tokens), 1);
+    coords = ft_split(tokens[1], ',');
+    if (!coords || !coords[0] || !coords[1] || !coords[2])
+        return (free_split(coords), free_split(tokens), 1);
+    scene->light->pos.x = ft_atod(coords[0]);
+    scene->light->pos.y = ft_atod(coords[1]);
+    scene->light->pos.z = ft_atod(coords[2]);
+    scene->light->b = ft_atod(tokens[2]);
+    free_split(coords);
+    if (scene->light->b < 0.0 || scene->light->b > 1.0)
+        return (free_split(tokens), 1);
+    color = ft_split(tokens[3], ',');
+    if (!coords || color[0] || color[1] || color[2])
+        return (free_split(color), free_split(tokens), 1);
+    scene->light->color.r = ft_atod(color[0]);
+    scene->light->color.g = ft_atod(color[1]);
+    scene->light->color.b = ft_atod(color[2]);
+    free_split(color);
+    if (scene->light->color.r < 0 || scene->light->color.r > 255
+		|| scene->light->color.g < 0 || scene->light->color.g > 255
+		|| scene->light->color.b < 0 || scene->light->color.b > 255)
+		return (free_split(tokens), 1);
+    free_split(tokens);
+    return 0;
     
 }
 
