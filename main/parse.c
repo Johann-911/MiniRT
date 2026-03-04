@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/02/26 15:40:58 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/04 13:26:18 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,13 @@ pl 0,0,0 0,1.0,0 255,0,225
 sp 0,0,20 20 255,0,0
 cy 50.0,0.0,20.6 0,0,1.0 14.2 21.42 10,0,255
 
+
+typedef struct s_camera
+{
+	t_vec3 origin;
+	t_vec3 vector;
+	double fov;
+}t_camera;
 
 */
 
@@ -161,7 +168,36 @@ int valid_ambient(char *line, t_scene *scene)
 
 int valid_camera(char *line, t_scene *scene)
 {
-    
+    char **tokens;
+    char **cords;
+    char **vector;
+
+    tokens = ft_split(line, ' ');
+    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
+        return (free_split(tokens), 1);
+    if (ft_strcmp(tokens[0], "C") != 0)
+        return (0);
+    cords = ft_split(tokens[1], ',');
+    if (!cords || !cords[0] || !cords[1] || !cords[2])
+        return (free_split(cords), free_split(tokens));
+    scene->camera.origin.x = ft_atod(cords[0]);
+    scene->camera.origin.y = ft_atod(cords[1]);
+    scene->camera.origin.z = ft_atod(cords[2]);
+    vector = ft_split(cords[2], ',');
+    if (!vector || !vector[0] || !vector[1] || !vector[2])
+        return (free_split(vector), free_split(cords), free_split(tokens));
+    scene->camera.vector.x = ft_atod(vector[0]);
+    scene->camera.vector.x = ft_atod(vector[1]);
+    scene->camera.vector.x = ft_atod(vector[2]);
+    if (scene->camera.vector.x < -1.0 || scene->camera.vector.x > 1.0
+		|| scene->camera.vector.y < -1.0 || scene->camera.vector.y > 1.0
+		|| scene->camera.vector.z < -1.0 || scene->camera.vector.z > 1.0)
+		return (free_split(tokens), 1);
+    scene->camera.fov = ft_atod(tokens[3]);
+    if (scene->camera.fov < 0 || scene->camera.fov > 180)
+        return (free_split(tokens), 1);
+    free_split(tokens);
+    return 0;
 }
 
 int valid_light(char *line, t_scene *scene)
