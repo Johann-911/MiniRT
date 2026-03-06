@@ -2,6 +2,8 @@
 # define RT_MATH_H
 
 #include <math.h>
+#include <stdbool.h>
+
 
 
 typedef struct s_list
@@ -141,7 +143,7 @@ t_vec3 vec3_add(t_vec3 a, t_vec3 b);
 t_vec3 vec3_sub(t_vec3 a, t_vec3 b);
 t_vec3 vec3_mul(t_vec3 v, double s);
 double vec3_dot(t_vec3 a, t_vec3 b);
-double vec3_len(t_vec3 v); gehe jetzt nach hause push das mal dann mache ich das zu hause noch weiter
+double vec3_len(t_vec3 v);
 t_vec3 vec3_norm(t_vec3 v);
 t_vec3 vec3_scale(t_vec3 v, double s);
 

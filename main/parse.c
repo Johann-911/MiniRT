@@ -277,7 +277,43 @@ int valid_sphere(char *line, t_scene *scene)
 
 int valid_plane(char *line, t_scene *scene)
 {
-    
+    char **tokens;
+    char **point;
+    char **normal;
+    char **color;
+    t_object *new;
+
+    tokens = ft_split(line, ' ');
+    if(!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
+        return (free_split(tokens), 1);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_PLANE;
+    new->next = NULL;
+    point = ft_split(line,',');
+    if(!point)
+        return (free(new), free_split(point), free_split(tokens), 1);
+    new->data.plane.normal.x = ft_atod(point[0]);
+    new->data.plane.normal.y = ft_atod(point[1]);
+    new->data.plane.normal.z = ft_atod(point[2]);
+    free_split(point);
+    normal = ft_split(line, ',');
+    if(!normal || !normal[0] || !normal[1] || !normal[2])
+        return (free(new), free_split(normal), free_split(tokens), 1);
+    new->data.plane.normal.x = ft_atod(normal[0]);
+    new->data.plane.normal.y = ft_atod(normal[1]);
+    new->data.plane.normal.z = ft_atod(normal[2]);
+    free_split(normal);
+    color = ft_spli
+
+
+
+
+
+
+
+
 }
 
 ///stephan
@@ -297,7 +333,7 @@ int valid_cylinder(char *line, t_scene *scene)
         return (free_split(tokens), 1);
     new->type = OBJ_CYLINDER;
     new->next = NULL;
-    
+
     cords = ft_split(tokens[1], ',');
     if (!cords || !cords[0] || !cords[1] || !cords[2])
         return (free(new), free_split(cords), free_split(tokens), 1);
@@ -396,8 +432,3 @@ int valid_cone(char *line, t_scene *scene)
 
 
 
-also sollte mit dings done sein
-ich mache mal intersection math weiter
-
-
-aber sollten wir das validieren nicht vorher machen? 
