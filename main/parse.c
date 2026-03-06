@@ -432,3 +432,5 @@ int valid_cone(char *line, t_scene *scene)
 
 
 
+//mathe Janni
+//grafik stjopka
