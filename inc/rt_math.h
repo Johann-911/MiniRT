@@ -105,6 +105,12 @@ typedef struct s_ambient
 	t_rgb color;
 }t_ambient;
 
+typedef struct s_ray
+{
+	t_vec3 origin;
+	t_vec3 direction;
+} t_ray;
+
 typedef struct s_camera
 {
 	t_vec3 origin;
@@ -129,8 +135,9 @@ t_vec3 vec3_add(t_vec3 a, t_vec3 b);
 t_vec3 vec3_sub(t_vec3 a, t_vec3 b);
 t_vec3 vec3_mul(t_vec3 v, double s);
 double vec3_dot(t_vec3 a, t_vec3 b);
-double vec3_len(t_vec3 v);
+double vec3_len(t_vec3 v); gehe jetzt nach hause push das mal dann mache ich das zu hause noch weiter
 t_vec3 vec3_norm(t_vec3 v);
+t_vec3 vec3_scale(t_vec3 v, double s);
 
 
 

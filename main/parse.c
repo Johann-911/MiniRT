@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/04 13:51:44 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/04 14:43:25 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,14 @@ pl 0,0,0 0,1.0,0 255,0,225
 sp 0,0,20 20 255,0,0
 cy 50.0,0.0,20.6 0,0,1.0 14.2 21.42 10,0,255
 
-typedef struct s_light
+typedef struct s_cylinder
 {
-	t_vec3 pos;
-	double 	b;
+	t_vec3 center;
+	t_vec3 vector;
+	double radius;
+	double height;
 	t_rgb color;
-	struct s_light *next;
-}t_light;
+}t_cylinder;
 
 */
 
@@ -186,8 +187,8 @@ int valid_camera(char *line, t_scene *scene)
     if (!vector || !vector[0] || !vector[1] || !vector[2])
         return (free_split(vector), free_split(cords), free_split(tokens), 1);
     scene->camera.vector.x = ft_atod(vector[0]);
-    scene->camera.vector.x = ft_atod(vector[1]);
-    scene->camera.vector.x = ft_atod(vector[2]);
+    scene->camera.vector.y = ft_atod(vector[1]);
+    scene->camera.vector.z = ft_atod(vector[2]);
     if (scene->camera.vector.x < -1.0 || scene->camera.vector.x > 1.0
 		|| scene->camera.vector.y < -1.0 || scene->camera.vector.y > 1.0
 		|| scene->camera.vector.z < -1.0 || scene->camera.vector.z > 1.0)
@@ -227,7 +228,7 @@ int valid_light(char *line, t_scene *scene)
     if (scene->light->b < 0.0 || scene->light->b > 1.0)
         return (free_split(tokens), 1);
     color = ft_split(tokens[3], ',');
-    if (!coords || color[0] || color[1] || color[2])
+    if (!coords || !color[0] || !color[1] || !color[2])
         return (free_split(color), free_split(tokens), 1);
     scene->light->color.r = ft_atod(color[0]);
     scene->light->color.g = ft_atod(color[1]);
@@ -239,11 +240,38 @@ int valid_light(char *line, t_scene *scene)
 		return (free_split(tokens), 1);
     free_split(tokens);
     return 0;
-    
 }
 
 int valid_sphere(char *line, t_scene *scene)
 {
+    char **tokens;
+    char **coords;
+    char **color;
+    t_object *new;
+
+
+    tokens = ft_split(line, ' ');
+    if(!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
+        return (free_split(tokens), 1);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_SPHERE;
+    new->next = NULL;
+    coords = ft_split(tokens[0], ',');
+    if(!coords || !coords[0] || !coords[1] || !coords[2])
+        return (free_split(coords), free_split(tokens), 1);
+    new->data.sphere.center.x = ft_atod(coords[0]);
+    new->data.sphere.center.y = ft_atod(coords[1]);
+    new->data.sphere.center.z = ft_atod(coords[2]);
+    free_split(coords);
+    new->data.sphere.r = ft_atod(tokens[2]);
+    color = ft_split(tokens[3], ',');
+    if(!color || !color[0] || !color[1] || !color[2]);
+        return(free_split(color), free_split(tokens), 1);
+    new->data.sphere.color.r = ft_atod(color[0]); 
+    new->data.sphere.color.g = ft_atod(color[1]);
+    new->data.sphere.color.b = ft_atod(color[2]);
     
 }
 
@@ -251,11 +279,125 @@ int valid_plane(char *line, t_scene *scene)
 {
     
 }
+
+///stephan
 int valid_cylinder(char *line, t_scene *scene)
 {
+    char **tokens;
+    char **cords;
+    char **vector;
+    char **color;
+    t_object *new;
+
+    tokens = ft_split(line, ' ');
+    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
+        return (free_split(tokens), 1);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_CYLINDER;
+    new->next = NULL;
     
+    cords = ft_split(tokens[1], ',');
+    if (!cords || !cords[0] || !cords[1] || !cords[2])
+        return (free(new), free_split(cords), free_split(tokens), 1);
+    new->data.cylinder.center.x = ft_atod(cords[0]);
+    new->data.cylinder.center.y = ft_atod(cords[1]);
+    new->data.cylinder.center.z = ft_atod(cords[2]);
+    free_split(cords);
+    vector = ft_split(cords[2], ',');
+    if (!vector || !vector[0] || !vector[1] || !vector[2])
+        return (free(new), free_split(vector), free_split(tokens), 1);
+    new->data.cylinder.vector.x = ft_atod(vector[0]);
+    new->data.cylinder.vector.y = ft_atod(vector[1]);
+    new->data.cylinder.vector.z = ft_atod(vector[2]);
+    free_split(vector);
+    if (new->data.cylinder.vector.x < -1.0 || new->data.cylinder.vector.x > 1.0
+        || new->data.cylinder.vector.y < -1.0 || new->data.cylinder.vector.y > 1.0
+        || new->data.cylinder.vector.z < -1.0 || new->data.cylinder.vector.x > 1.0)
+		return (free(new), free_split(tokens), 1);
+    new->data.cylinder.radius = ft_atod(tokens[3]) / 2.0;
+    new->data.cylinder.height = ft_atod(tokens[4]);
+    color = ft_split(tokens[5], ',');
+    if (!color || color[0] || color[1] || color[2])
+        return (free(new), free_split(color), free_split(tokens), 1);
+    new->data.cylinder.color.r = ft_atod(color[0]);
+    new->data.cylinder.color.g = ft_atod(color[1]);
+    new->data.cylinder.color.b = ft_atod(color[2]);
+    free_split(color);
+    if (new->data.cylinder.color.r < 0 || new->data.cylinder.color.r > 255
+        || new->data.cylinder.color.g < 0 || new->data.cylinder.color.g > 255
+        || new->data.cylinder.color.b < 0 || new->data.cylinder.color.b > 255 )
+        return (free(new), free_split(tokens), 1);
+    if (!scene->objects)
+        scene->objects = new;
+    else
+        ft_lstadd_back(scene->objects, new);
+    free_split(tokens);
+    return (0);
 }
+///stephan
 int valid_cone(char *line, t_scene *scene)
 {
+    char **tokens;
+    char **cords;
+    char **vector;
+    char **color;
+    t_object *new;
+
+    tokens = ft_split(line, ' ');
+    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
+        return (free_split(tokens), 1);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_CONE;
+    new->next = NULL;
     
+    cords = ft_split(tokens[1], ',');
+    if (!cords || !cords[0] || !cords[1] || !cords[2])
+        return (free(new), free_split(cords), free_split(tokens), 1);
+    new->data.cone.tip.x = ft_atod(cords[0]);
+    new->data.cone.tip.y = ft_atod(cords[1]);
+    new->data.cone.tip.z = ft_atod(cords[2]);
+    free_split(cords);
+    vector = ft_split(cords[2], ',');
+    if (!vector || !vector[0] || !vector[1] || !vector[2])
+        return (free(new), free_split(vector), free_split(tokens), 1);
+    new->data.cone.axis.x = ft_atod(vector[0]);
+    new->data.cone.axis.y = ft_atod(vector[1]);
+    new->data.cone.axis.z = ft_atod(vector[2]);
+    free_split(vector);
+    if (new->data.cone.axis.x < -1.0 || new->data.cone.axis.x > 1.0
+        || new->data.cone.axis.y < -1.0 || new->data.cone.axis.y > 1.0
+        || new->data.cone.axis.z < -1.0 || new->data.cone.axis.x > 1.0)
+		return (free(new), free_split(tokens), 1);
+    new->data.cone.radius = ft_atod(tokens[3]) / 2.0;
+    new->data.cone.height = ft_atod(tokens[4]);
+    color = ft_split(tokens[5], ',');
+    if (!color || color[0] || color[1] || color[2])
+        return (free(new), free_split(color), free_split(tokens), 1);
+    new->data.cone.color.r = ft_atod(color[0]);
+    new->data.cone.color.g = ft_atod(color[1]);
+    new->data.cone.color.b = ft_atod(color[2]);
+    free_split(color);
+    if (new->data.cone.color.r < 0 || new->data.cone.color.r > 255
+        || new->data.cone.color.g < 0 || new->data.cone.color.g > 255
+        || new->data.cone.color.b < 0 || new->data.cone.color.b > 255 )
+        return (free(new), free_split(tokens), 1);
+    if (!scene->objects)
+        scene->objects = new;
+    else
+        ft_lstadd_back(scene->objects, new);
+    free_split(tokens);
+    return (0);
 }
+
+
+
+
+also sollte mit dings done sein
+ich mache mal intersection math weiter
+
+
+aber sollten wir das validieren nicht vorher machen? 
