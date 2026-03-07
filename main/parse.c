@@ -305,15 +305,12 @@ int valid_plane(char *line, t_scene *scene)
     new->data.plane.normal.y = ft_atod(normal[1]);
     new->data.plane.normal.z = ft_atod(normal[2]);
     free_split(normal);
-    color = ft_spli
-
-
-
-
-
-
-
-
+    color = ft_split(line, ',');
+    if(!color || !color[0] || !color[1] || !color[2])
+        return (free(new), free_split(color), free_split(tokens), 1);
+    new->data.plane.color.r =  ft_atod(color[0]);
+    new->data.plane.color.g =  ft_atod(color[1]);
+    new->data.plane.color.b =  ft_atod(color[2]);
 }
 
 ///stephan
