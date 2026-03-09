@@ -29,4 +29,4 @@ int	handle_mouse(int button, int x, int y, void *param);
 int	handle_close(void *param);
 void recreate_image_and_draw(t_app *app);
 
-#endif
+#endif 

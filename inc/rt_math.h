@@ -107,11 +107,6 @@ typedef struct s_ambient
 	t_rgb color;
 }t_ambient;
 
-typedef struct s_ray
-{
-	t_vec3 origin;
-	t_vec3 direction;
-} t_ray;
 
 typedef struct s_camera
 {
@@ -120,12 +115,12 @@ typedef struct s_camera
 	double fov;
 }t_camera;
 
-
 typedef struct s_ray
 {
 	t_vec3 origin;
 	t_vec3 direction;
 } t_ray;
+
 typedef struct s_scene
 {
 	t_ambient ambient;

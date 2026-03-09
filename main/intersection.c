@@ -23,35 +23,39 @@ t_vec3 vec3_scale(t_vec3 v, double s)
     return (result);
 }
 
-bool    inter_sphere(t_ray ray, t_sphere *sphere, double *s)
+double	min_pos(double t1, double t2)
 {
-    
+    if (t1 > 0 && t2 > 0)
+        return (t1 < t2 ? t1 : t2);
+    if (t1 > 0)
+        return (t1);
+    if (t2 > 0)
+        return (t2);
+    return (-1);
 }
-
-bool    inter_plane(t_ray ray, t_plane *plane, double *s)
-{
-    
-}
-
-bool    inter_cylinder(t_ray ray, t_cylinder *cylinder, double *s)
-{
-    
-}
-
 
 t_vec3  norm_sphere(t_vec3 point, t_sphere *sphere)
 {
-    
+    return (vec3_norm(vec3_sub(point, sphere->center)));
 }
 
 t_vec3  norm_plane(t_plane *plane)
 {
-    
+    return (vec3_norm(plane->normal));
 }
 
 t_vec3  normal_cylinder(t_vec3 point, t_cylinder *cylinder)
 {
+    t_vec3 axis;
+    t_vec3 to_point;
+    t_vec3 proj;
+    t_vec3 radial;
     
+    axis = vec3_norm(cylinder->vector);
+    to_point = vec3_sub(point, cylinder->center);
+    proj = vec3_scale(axis, vec3_dot(to_point, axis));
+    radial = vec3_sub(to_point, proj);
+    return vec3_norm(radial);
 }
 
 double discriminant(double a, double b, double c)
