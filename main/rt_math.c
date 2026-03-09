@@ -21,7 +21,7 @@ t_vec3 vec3_sub(t_vec3 a, t_vec3 b)
 	return(vec3(a.x - b.x, a.y - b.y, a.z - b.z));
 }
 
-t_vec3 vec3_mul(t_vec3 a, double s)
+t_vec3 vec3_scale(t_vec3 a, double s)
 {
 	return(vec3(a.x * s, a.y * s, a.z * s));
 }

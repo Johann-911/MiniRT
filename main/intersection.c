@@ -14,14 +14,6 @@
 #include "../inc/parser.h"
 
 //  a · b = ax · bx + ay · by + az · bz
-t_vec3 vec3_scale(t_vec3 v, double s)
-{
-    t_vec3  result;
-    result.x = v.x * s;
-    result.y = v.y * s;
-    result.z = v.z * s;
-    return (result);
-}
 
 double	min_pos(double t1, double t2)
 {
@@ -113,7 +105,30 @@ double inter_plane(t_ray ray, t_plane plane)
     return (t);
 }
 // 3 intersections: side, top and bottom cap
+double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
+{
+    t_plane cap;
+    t_vec3 hit;
+    t_vec3 diff;
+    double t;
+
+    cap.point = cap_center;
+    cap.normal = cap_norm;
+    t = inter_plane(ray, cap);
+    if(t < 0)
+        return -1;
+    hit = vec3_add(ray.origin, vec3_scale(ray.direction, t));
+    diff = vec3_sub(hit, cap_center);
+    if(vec3_len(diff) > radius)
+        return -1;
+    return t;
+}
+
+
 double inter_cylinder(t_ray ray, t_cylinder cylinder)
 {
+
+
     
 }
+// inter cylinder echt ein scheis 

@@ -136,12 +136,24 @@ typedef struct s_scene
 t_vec3 vec3(double x, double y, double z);
 t_vec3 vec3_add(t_vec3 a, t_vec3 b);
 t_vec3 vec3_sub(t_vec3 a, t_vec3 b);
-t_vec3 vec3_mul(t_vec3 v, double s);
+t_vec3 vec3_scale(t_vec3 v, double s);
 double vec3_dot(t_vec3 a, t_vec3 b);
 double vec3_len(t_vec3 v);
 t_vec3 vec3_norm(t_vec3 v);
 t_vec3 vec3_scale(t_vec3 v, double s);
+t_vec3	vec3_cross(t_vec3 a, t_vec3 b);
+double	ft_atod(const char *str);
 
+//intersection functions
+double	inter_sphere(t_ray ray, t_sphere sphere);
+double	inter_plane(t_ray ray, t_plane plane);
+double	inter_cylinder(t_ray ray, t_cylinder cylinder);
+
+
+// normal functions
+t_vec3	norm_sphere(t_vec3 point, t_sphere *sphere);
+t_vec3	norm_plane(t_plane *plane);
+t_vec3	normal_cylinder(t_vec3 point, t_cylinder *cylinder);
 
 
 
