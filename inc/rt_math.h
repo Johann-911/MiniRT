@@ -133,6 +133,15 @@ typedef struct s_scene
     int			has_camera;
 }t_scene;
 
+typedef struct s_hit
+{
+    double	t;
+    t_vec3	point;
+    t_vec3	normal;
+    t_rgb	color;
+    int		hit;
+}t_hit;
+
 t_vec3 vec3(double x, double y, double z);
 t_vec3 vec3_add(t_vec3 a, t_vec3 b);
 t_vec3 vec3_sub(t_vec3 a, t_vec3 b);

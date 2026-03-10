@@ -50,6 +50,23 @@ t_vec3  normal_cylinder(t_vec3 point, t_cylinder *cylinder)
     return vec3_norm(radial);
 }
 
+t_vec3 normal_cone(t_vec3 point, t_cone *cone)
+{
+    t_vec3 axis;
+    t_vec3 to_point;
+    t_vec3 radial;
+    double proj_len;
+    double k;
+
+    axis = vec3_norm(cone->axis);
+    to_point = vec3_sub(point, cone->tip);
+    proj_len = vec3_dot(to_point, axis);
+    radial = vec3_sub(to_point, vec3_scale(axis, proj_len));
+    k = cone->radius / cone->height;
+    return(vec3_norm(vec3_sub(radial, vec3_scale(axis, vec3_len(radial) * k))));
+
+}
+
 double discriminant(double a, double b, double c)
 {
     double  discriminant;
@@ -65,6 +82,32 @@ double discriminant(double a, double b, double c)
 //   | ray
 //   v
 // O ----------- t1 ---- (sphere) ---- t2
+
+t_hit closets_hit(t_ray ray, t_scene *scene)
+{
+    t_hit hit;
+    t_object *obj;
+    double t;
+    t_vec3 pt;
+
+    hit.hit = 0;
+    hit.t = -1;
+    obj = scene->objects;
+    while(obj)
+    {
+
+
+
+
+        
+    }
+
+
+
+}
+
+
+
 
 double inter_sphere(t_ray ray, t_sphere sphere)
 {

@@ -183,7 +183,7 @@ int valid_camera(char *line, t_scene *scene)
     scene->camera.origin.x = ft_atod(cords[0]);
     scene->camera.origin.y = ft_atod(cords[1]);
     scene->camera.origin.z = ft_atod(cords[2]);
-    vector = ft_split(cords[2], ',');
+    vector = ft_split(tokens[2], ',');
     if (!vector || !vector[0] || !vector[1] || !vector[2])
         return (free_split(vector), free_split(cords), free_split(tokens), 1);
     scene->camera.vector.x = ft_atod(vector[0]);
@@ -258,7 +258,7 @@ int valid_sphere(char *line, t_scene *scene)
         return (free_split(tokens), 1);
     new->type = OBJ_SPHERE;
     new->next = NULL;
-    coords = ft_split(tokens[0], ',');
+    coords = ft_split(tokens[1], ',');
     if(!coords || !coords[0] || !coords[1] || !coords[2])
         return (free_split(coords), free_split(tokens), 1);
     new->data.sphere.center.x = ft_atod(coords[0]);
@@ -267,12 +267,12 @@ int valid_sphere(char *line, t_scene *scene)
     free_split(coords);
     new->data.sphere.r = ft_atod(tokens[2]);
     color = ft_split(tokens[3], ',');
-    if(!color || !color[0] || !color[1] || !color[2]);
+    if(!color || !color[0] || !color[1] || !color[2])
         return(free_split(color), free_split(tokens), 1);
     new->data.sphere.color.r = ft_atod(color[0]); 
     new->data.sphere.color.g = ft_atod(color[1]);
     new->data.sphere.color.b = ft_atod(color[2]);
-    
+    return 0;
 }
 
 int valid_plane(char *line, t_scene *scene)
@@ -291,7 +291,7 @@ int valid_plane(char *line, t_scene *scene)
         return (free_split(tokens), 1);
     new->type = OBJ_PLANE;
     new->next = NULL;
-    point = ft_split(line,',');
+    point = ft_split(tokens[1],',');
     if(!point)
         return (free(new), free_split(point), free_split(tokens), 1);
     new->data.plane.normal.x = ft_atod(point[0]);
@@ -311,6 +311,7 @@ int valid_plane(char *line, t_scene *scene)
     new->data.plane.color.r =  ft_atod(color[0]);
     new->data.plane.color.g =  ft_atod(color[1]);
     new->data.plane.color.b =  ft_atod(color[2]);
+    return 0;
 }
 
 ///stephan
@@ -337,8 +338,7 @@ int valid_cylinder(char *line, t_scene *scene)
     new->data.cylinder.center.x = ft_atod(cords[0]);
     new->data.cylinder.center.y = ft_atod(cords[1]);
     new->data.cylinder.center.z = ft_atod(cords[2]);
-    free_split(cords);
-    vector = ft_split(cords[2], ',');
+    vector = ft_split(tokens[2], ',');
     if (!vector || !vector[0] || !vector[1] || !vector[2])
         return (free(new), free_split(vector), free_split(tokens), 1);
     new->data.cylinder.vector.x = ft_atod(vector[0]);
@@ -352,7 +352,7 @@ int valid_cylinder(char *line, t_scene *scene)
     new->data.cylinder.radius = ft_atod(tokens[3]) / 2.0;
     new->data.cylinder.height = ft_atod(tokens[4]);
     color = ft_split(tokens[5], ',');
-    if (!color || color[0] || color[1] || color[2])
+    if (!color || !color[0] || !color[1] || !color[2])
         return (free(new), free_split(color), free_split(tokens), 1);
     new->data.cylinder.color.r = ft_atod(color[0]);
     new->data.cylinder.color.g = ft_atod(color[1]);
@@ -393,8 +393,7 @@ int valid_cone(char *line, t_scene *scene)
     new->data.cone.tip.x = ft_atod(cords[0]);
     new->data.cone.tip.y = ft_atod(cords[1]);
     new->data.cone.tip.z = ft_atod(cords[2]);
-    free_split(cords);
-    vector = ft_split(cords[2], ',');
+    vector = ft_split(tokens[2], ',');
     if (!vector || !vector[0] || !vector[1] || !vector[2])
         return (free(new), free_split(vector), free_split(tokens), 1);
     new->data.cone.axis.x = ft_atod(vector[0]);
@@ -408,7 +407,7 @@ int valid_cone(char *line, t_scene *scene)
     new->data.cone.radius = ft_atod(tokens[3]) / 2.0;
     new->data.cone.height = ft_atod(tokens[4]);
     color = ft_split(tokens[5], ',');
-    if (!color || color[0] || color[1] || color[2])
+    if (!color || !color[0] || !color[1] || !color[2])
         return (free(new), free_split(color), free_split(tokens), 1);
     new->data.cone.color.r = ft_atod(color[0]);
     new->data.cone.color.g = ft_atod(color[1]);
