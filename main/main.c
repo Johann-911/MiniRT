@@ -92,11 +92,12 @@ int	main(int ac, char **av)
 {
 	t_app app;
 	int fd;
+	t_scene scene;
 
 	if (ac != 2)
 		return (perror("Wrong Usage. ./miniRT <input_file.rt>"), 1);
 	fd = open(av[1], O_RDONLY);
-	if (!validate(fd))
+	if (!validate(fd, &scene))
 		return (close(fd), perror("Error"), 1);
 	close(fd);
 
@@ -109,7 +110,7 @@ int	main(int ac, char **av)
 		perror("mlx_init");
 		return (1);
 	}
-	app.win = mlx_new_window(app.mlx, app.width, app.height, "miniRT-MLX test");
+	app.win = mlx_new_window(app.mlx, app.width, app.height, "miniRT");
 	if (!app.win)
 	{
 		perror("mlx_new_window");
@@ -121,7 +122,8 @@ int	main(int ac, char **av)
 		perror("mlx_new_image");
 		return (1);
 	}
-	fill_gradient(&app);
+	render_scene(&app, &scene);
+	
 	mlx_hook(app.win, 2, 1L << 0, handle_key, &app);
 	mlx_hook(app.win, 17, 0, handle_close, &app);
 	mlx_loop(app.mlx);
