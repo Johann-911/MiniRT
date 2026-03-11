@@ -83,31 +83,69 @@ double discriminant(double a, double b, double c)
 //   v
 // O ----------- t1 ---- (sphere) ---- t2
 
-t_hit closets_hit(t_ray ray, t_scene *scene)
+void	set_normal(t_hit *result, t_object *obj, t_vec3 hit_point)
 {
-    t_hit hit;
-    t_object *obj;
-    double t;
-    t_vec3 pt;
+    if (obj->type == OBJ_SPHERE)
+        result->normal = norm_sphere(hit_point, &obj->data.sphere);
+    else if (obj->type == OBJ_PLANE)
+        result->normal = norm_plane(&obj->data.plane);
+    else if (obj->type == OBJ_CYLINDER)
+        result->normal = normal_cylinder(hit_point, &obj->data.cylinder);
+    else if (obj->type == OBJ_CONE)
+        result->normal = normal_cone(hit_point, &obj->data.cone);
+}
 
-    hit.hit = 0;
-    hit.t = -1;
+void	set_color(t_hit *result, t_object *obj)
+{
+    if (obj->type == OBJ_SPHERE)
+        result->color = obj->data.sphere.color;
+    else if (obj->type == OBJ_PLANE)
+        result->color = obj->data.plane.color;
+    else if (obj->type == OBJ_CYLINDER)
+        result->color = obj->data.cylinder.color;
+    else
+        result->color = obj->data.cone.color;
+}
+
+double	get_dist(t_ray ray, t_object *obj)
+{
+    if (obj->type == OBJ_SPHERE)
+        return (inter_sphere(ray, obj->data.sphere));
+    if (obj->type == OBJ_PLANE)
+        return (inter_plane(ray, obj->data.plane));
+    if (obj->type == OBJ_CYLINDER)
+        return (inter_cylinder(ray, obj->data.cylinder));
+    if (obj->type == OBJ_CONE)
+        return (inter_cone(ray, obj->data.cone));
+    return (-1);
+}
+
+t_hit closest_hit(t_ray ray, t_scene * scene)
+{
+    t_hit result;
+    t_object *obj;
+    double dist;
+    t_vec3 hit_point;
+
+    result.hit = 0;
+    result.t = -1;
     obj = scene->objects;
     while(obj)
     {
-
-
-
-
-        
+        dist = get_dist(ray, obj);
+        if(dist > 0 && (!result.hit || dist < result.t))
+        {
+            result.t = dist;
+            result.hit = 1;
+            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, dist));
+            result.point = hit_point;
+            set_normal(&result, obj, hit_point);
+            set_color(&result, obj);
+        }
+        obj = obj->next;
     }
-
-
-
+    return result;
 }
-
-
-
 
 double inter_sphere(t_ray ray, t_sphere sphere)
 {
@@ -122,7 +160,6 @@ double inter_sphere(t_ray ray, t_sphere sphere)
     b = 2 * vec3_dot(dis, ray.direction);
     c = vec3_dot(dis,dis) - sphere.r * sphere.r;
     return (discriminant(a, b, c));
-    
 }
 //plane intersect is simpler than sphere, only needs linear solution
 //denominator 0 means no hit, t < 0 plane is behind the ray
@@ -167,9 +204,10 @@ double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
     return t;
 }
 
-
 double inter_cylinder(t_ray ray, t_cylinder cylinder)
 {
+
+
 
 
     

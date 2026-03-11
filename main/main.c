@@ -41,6 +41,7 @@ void	draw_image(t_app *app)
 	}
 }
 
+
 void	fill_gradient(t_app *app)
 {
 	int		bpp;

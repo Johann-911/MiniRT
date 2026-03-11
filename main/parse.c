@@ -249,7 +249,6 @@ int valid_sphere(char *line, t_scene *scene)
     char **color;
     t_object *new;
 
-
     tokens = ft_split(line, ' ');
     if(!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
         return (free_split(tokens), 1);
