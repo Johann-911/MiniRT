@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   intersection.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
+/*   By: stephan <stephan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 14:43:39 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/04 15:22:06 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/11 12:12:13 by stephan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,10 +206,85 @@ double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
 
 double inter_cylinder(t_ray ray, t_cylinder cylinder)
 {
-
-
-
-
+    t_vec3 axis;           
+    t_vec3 oc;             
+    t_vec3 proj_dir;       
+    t_vec3 proj_oc;        
+    double a, b, c, disc;
+    double t, t_side, t_cap1, t_cap2;
+    t_vec3 hit_point;
+    double height_check;
+    t_vec3 cap_top, cap_bottom;
+    axis = vec3_norm(cylinder.vector);
+    oc = vec3_sub(ray.origin, cylinder.center);
+    proj_dir = vec3_sub(ray.direction, vec3_scale(axis, vec3_dot(ray.direction, axis)));
+    proj_oc = vec3_sub(oc, vec3_scale(axis, vec3_dot(oc, axis)));
+    a = vec3_dot(proj_dir, proj_dir);
+    b = 2.0 * vec3_dot(proj_oc, proj_dir);
+    c = vec3_dot(proj_oc, proj_oc) - (cylinder.radius * cylinder.radius);
     
+    t_side = -1;
+    disc = b * b - 4 * a * c;
+    
+    if (disc >= 0 && fabs(a) > 1e-6)
+    {
+        t = (-b - sqrt(disc)) / (2.0 * a);
+        if (t > 0)
+        {
+            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, t));
+            height_check = vec3_dot(vec3_sub(hit_point, cylinder.center), axis);
+            if (height_check >= 0 && height_check <= cylinder.height)
+                t_side = t;
+        }
+    }
+    cap_bottom = cylinder.center;
+    cap_top = vec3_add(cylinder.center, vec3_scale(axis, cylinder.height));
+    t_cap1 = inter_cap(ray, cap_bottom, vec3_scale(axis, -1), cylinder.radius);
+    t_cap2 = inter_cap(ray, cap_top, axis, cylinder.radius);
+    return (min_pos(t_side, min_pos(t_cap1, t_cap2)));
 }
-// inter cylinder echt ein scheis 
+
+double inter_cone(t_ray ray, t_cylinder cone)
+{
+    t_vec3 axis;
+    t_vec3 oc;
+    double k;
+    double dot_dir_axis;
+    double dot_oc_axis;
+    double dot_dir_oc;
+    double a, b, c, disc;
+    double t, t1, t2;
+    t_vec3 hit;
+    double h;
+
+    axis = vec3_norm(cone.vector);
+    oc = vec3_sub(ray.origin, cone.center);
+    k = (cone.radius / cone.height) * (cone.radius / cone.height);
+    dot_dir_axis = vec3_dot(ray.direction, axis);
+    dot_oc_axis = vec3_dot(oc, axis);
+    dot_dir_oc = vec3_dot(ray.direction, oc);
+    a = dot_dir_axis * dot_dir_axis - k * vec3_dot(ray.direction, ray.direction);
+    b = 2.0 * (dot_dir_axis * dot_oc_axis - k * dot_dir_oc);
+    c = dot_oc_axis * dot_oc_axis - k * vec3_dot(oc, oc);
+    disc = b * b - 4 * a * c;
+    if (disc < 0 || fabs(a) < 1e-6)
+        return (-1);
+    t1 = (-b - sqrt(disc)) / (2.0 * a);
+    t2 = (-b + sqrt(disc)) / (2.0 * a);
+    if (t1 > 0)
+    {
+        hit = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
+        h = vec3_dot(vec3_sub(hit, cone.center), axis);
+        if (h >= 0 && h <= cone.height)
+            return (t1);
+    }
+    if (t2 > 0)
+    {
+        hit = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
+        h = vec3_dot(vec3_sub(hit, cone.center), axis);
+        if (h >= 0 && h <= cone.height)
+            return (t2);
+    }
+    
+    return (-1);
+}

@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "../GNL/get_next_line.h"
+#include "../Printf/Libft/libft.h"
 #include "rt_math.h"
 
 
@@ -38,8 +39,8 @@ int valid_plane(char *line, t_scene *scene);
 int valid_cylinder(char *line, t_scene *scene);
 int valid_cone(char *line, t_scene *scene);
 double	ft_atod(const char *str);
-
-
-
+void	free_split(char **split);
+void	init_scene(t_scene *scene);
+void	add_object(t_scene *scene, t_object *new);
 
 #endif
