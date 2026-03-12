@@ -222,10 +222,8 @@ double inter_cylinder(t_ray ray, t_cylinder cylinder)
     a = vec3_dot(proj_dir, proj_dir);
     b = 2.0 * vec3_dot(proj_oc, proj_dir);
     c = vec3_dot(proj_oc, proj_oc) - (cylinder.radius * cylinder.radius);
-    
     t_side = -1;
     disc = b * b - 4 * a * c;
-    
     if (disc >= 0 && fabs(a) > 1e-6)
     {
         t = (-b - sqrt(disc)) / (2.0 * a);
@@ -244,7 +242,7 @@ double inter_cylinder(t_ray ray, t_cylinder cylinder)
     return (min_pos(t_side, min_pos(t_cap1, t_cap2)));
 }
 
-double inter_cone(t_ray ray, t_cylinder cone)
+double inter_cone(t_ray ray, t_cone cone)
 {
     t_vec3 axis;
     t_vec3 oc;
@@ -285,6 +283,5 @@ double inter_cone(t_ray ray, t_cylinder cone)
         if (h >= 0 && h <= cone.height)
             return (t2);
     }
-    
     return (-1);
 }

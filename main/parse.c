@@ -200,14 +200,6 @@ int valid_camera(char *line, t_scene *scene)
     return (0);
 }
 
-typedef struct s_light
-{
-	t_vec3 pos;
-	double 	b;
-	t_rgb color;
-	struct s_light *next;
-}t_light;
-
 int valid_light(char *line, t_scene *scene)
 {
     char **tokens;
@@ -271,7 +263,14 @@ int valid_sphere(char *line, t_scene *scene)
     new->data.sphere.color.r = ft_atod(color[0]); 
     new->data.sphere.color.g = ft_atod(color[1]);
     new->data.sphere.color.b = ft_atod(color[2]);
-    return 0;
+    free_split(color);
+    free_split(coords);
+    if (!scene->objects)
+        scene->objects = new;
+    else
+        ft_lstadd_back(scene->objects, new);
+    free_split(tokens);
+    return (0);
 }
 
 int valid_plane(char *line, t_scene *scene)
@@ -297,14 +296,14 @@ int valid_plane(char *line, t_scene *scene)
     new->data.plane.normal.y = ft_atod(point[1]);
     new->data.plane.normal.z = ft_atod(point[2]);
     free_split(point);
-    normal = ft_split(line, ',');
+    normal = ft_split(tokens[2], ',');
     if(!normal || !normal[0] || !normal[1] || !normal[2])
         return (free(new), free_split(normal), free_split(tokens), 1);
     new->data.plane.normal.x = ft_atod(normal[0]);
     new->data.plane.normal.y = ft_atod(normal[1]);
     new->data.plane.normal.z = ft_atod(normal[2]);
     free_split(normal);
-    color = ft_split(line, ',');
+    color = ft_split(tokens[3], ',');
     if(!color || !color[0] || !color[1] || !color[2])
         return (free(new), free_split(color), free_split(tokens), 1);
     new->data.plane.color.r =  ft_atod(color[0]);
@@ -337,6 +336,7 @@ int valid_cylinder(char *line, t_scene *scene)
     new->data.cylinder.center.x = ft_atod(cords[0]);
     new->data.cylinder.center.y = ft_atod(cords[1]);
     new->data.cylinder.center.z = ft_atod(cords[2]);
+    free_split(cords);
     vector = ft_split(tokens[2], ',');
     if (!vector || !vector[0] || !vector[1] || !vector[2])
         return (free(new), free_split(vector), free_split(tokens), 1);
@@ -346,7 +346,7 @@ int valid_cylinder(char *line, t_scene *scene)
     free_split(vector);
     if (new->data.cylinder.vector.x < -1.0 || new->data.cylinder.vector.x > 1.0
         || new->data.cylinder.vector.y < -1.0 || new->data.cylinder.vector.y > 1.0
-        || new->data.cylinder.vector.z < -1.0 || new->data.cylinder.vector.x > 1.0)
+        || new->data.cylinder.vector.z < -1.0 || new->data.cylinder.vector.z > 1.0)
 		return (free(new), free_split(tokens), 1);
     new->data.cylinder.radius = ft_atod(tokens[3]) / 2.0;
     new->data.cylinder.height = ft_atod(tokens[4]);
@@ -401,7 +401,7 @@ int valid_cone(char *line, t_scene *scene)
     free_split(vector);
     if (new->data.cone.axis.x < -1.0 || new->data.cone.axis.x > 1.0
         || new->data.cone.axis.y < -1.0 || new->data.cone.axis.y > 1.0
-        || new->data.cone.axis.z < -1.0 || new->data.cone.axis.x > 1.0)
+        || new->data.cone.axis.z < -1.0 || new->data.cone.axis.z > 1.0)
 		return (free(new), free_split(tokens), 1);
     new->data.cone.radius = ft_atod(tokens[3]) / 2.0;
     new->data.cone.height = ft_atod(tokens[4]);

@@ -148,7 +148,6 @@ t_vec3 vec3_scale(t_vec3 v, double s);
 double vec3_dot(t_vec3 a, t_vec3 b);
 double vec3_len(t_vec3 v);
 t_vec3 vec3_norm(t_vec3 v);
-t_vec3 vec3_scale(t_vec3 v, double s);
 t_vec3	vec3_cross(t_vec3 a, t_vec3 b);
 double	ft_atod(const char *str);
 
