@@ -5,12 +5,6 @@
 #include <stdbool.h>
 
 
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}t_list;
-
 typedef struct s_vec3
 {
 	double x;
@@ -156,7 +150,7 @@ t_hit   closest_hit(t_ray ray, t_scene *scene);
 double	inter_sphere(t_ray ray, t_sphere sphere);
 double	inter_plane(t_ray ray, t_plane plane);
 double	inter_cylinder(t_ray ray, t_cylinder cylinder);
-double  inter_cone(t_ray ray, t_cone cone);
+double	inter_cone(t_ray ray, t_cone cone);
 
 
 // normal functions

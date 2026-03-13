@@ -2,8 +2,8 @@
 #include "../inc/parser.h"
 #include "../inc/window.h"
 
- double clamp01(double v)
- {
+double clamp01(double v)
+{
 	if(v < 0.0)
 		return 0.0;
 	if(v > 1.0)
@@ -97,6 +97,23 @@ int	shade_hit(t_scene *scene, t_hit hit)
     c.g = (int)(hit.color.g * intensity);
     c.b = (int)(hit.color.b * intensity);
     return (rgb_to_int_local(c));
+}
+
+int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light)
+{
+    t_ray	shadow_ray;
+    t_hit	blocker;
+    t_vec3	to_light;
+    double	light_dist;
+
+    to_light = vec3_sub(light->pos, hit.point);
+    light_dist = vec3_len(to_light);
+    shadow_ray.origin = vec3_add(hit.point, vec3_scale(hit.normal, 1e-4));
+    shadow_ray.direction = vec3_norm(to_light);
+    blocker = closest_hit(shadow_ray, scene);
+    if (blocker.hit && blocker.t > 0.0 && blocker.t < light_dist)
+        return (1);
+    return (0);
 }
 
 void	render_scene(t_app *app, t_scene *scene)

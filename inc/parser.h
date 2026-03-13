@@ -42,5 +42,5 @@ double	ft_atod(const char *str);
 void	free_split(char **split);
 void	init_scene(t_scene *scene);
 void	add_object(t_scene *scene, t_object *new);
-
+void	free_split(char **split);
 #endif

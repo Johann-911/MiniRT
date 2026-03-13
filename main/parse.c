@@ -85,6 +85,36 @@ typedef struct s_cylinder
 
 */
 
+void	free_split(char **split)
+{
+    int	i;
+
+    if (!split)
+        return ;
+    i = 0;
+    while (split[i])
+    {
+        free(split[i]);
+        i++;
+    }
+    free(split);
+}
+
+void	append_object(t_scene *scene, t_object *new_obj)
+{
+    t_object	*cur;
+
+    if (!scene->objects)
+    {
+        scene->objects = new_obj;
+        return ;
+    }
+    cur = scene->objects;
+    while (cur->next)
+        cur = cur->next;
+    cur->next = new_obj;
+}
+
 int validate(int fd, t_scene *scene)
 {
     char    *line;
@@ -268,7 +298,7 @@ int valid_sphere(char *line, t_scene *scene)
     if (!scene->objects)
         scene->objects = new;
     else
-        ft_lstadd_back(scene->objects, new);
+        append_object(scene, new);
     free_split(tokens);
     return (0);
 }
@@ -309,7 +339,12 @@ int valid_plane(char *line, t_scene *scene)
     new->data.plane.color.r =  ft_atod(color[0]);
     new->data.plane.color.g =  ft_atod(color[1]);
     new->data.plane.color.b =  ft_atod(color[2]);
-    return 0;
+    if (!scene->objects)
+        scene->objects = new;
+    else
+        append_object(scene, new);
+    free_split(tokens);
+    return (0);
 }
 
 ///stephan
@@ -364,7 +399,7 @@ int valid_cylinder(char *line, t_scene *scene)
     if (!scene->objects)
         scene->objects = new;
     else
-        ft_lstadd_back(scene->objects, new);
+        append_object(scene, new);
     free_split(tokens);
     return (0);
 }
@@ -419,7 +454,7 @@ int valid_cone(char *line, t_scene *scene)
     if (!scene->objects)
         scene->objects = new;
     else
-        ft_lstadd_back(scene->objects, new);
+        append_object(scene, new);
     free_split(tokens);
     return (0);
 }

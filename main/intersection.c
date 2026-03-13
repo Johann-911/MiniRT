@@ -168,14 +168,14 @@ double inter_sphere(t_ray ray, t_sphere sphere)
     t2 = (-b + sqrt(disc)) / (2.0 * a);
     return (min_pos(t1, t2));
 }
-//plane intersect is simpler than sphere, only needs linear solution
+/*plane intersect is simpler than sphere, only needs linear solution
 //denominator 0 means no hit, t < 0 plane is behind the ray
 //            ray
 //             \
 //              \
 //               \   t
 //                \------X (intersection)
-// ------------------------------
+// ------------------------------*/
 double inter_plane(t_ray ray, t_plane plane)
 {
     double denominator;
@@ -191,7 +191,7 @@ double inter_plane(t_ray ray, t_plane plane)
         return (-1);
     return (t);
 }
-// 3 intersections: side, top and bottom cap
+/*     intersections: side, top and bottom cap    */ 
 double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
 {
     t_plane cap;

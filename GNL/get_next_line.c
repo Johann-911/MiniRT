@@ -37,7 +37,7 @@ int	build_line(char **line, char *buffer)
 	int		i;
 
 	i = 0;
-	temp = ft_strjoin(*line, buffer);
+	temp = ft_strjoin_gnl(*line, buffer);
 	free(*line);
 	if (temp == NULL)
 		return (-1);

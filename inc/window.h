@@ -7,6 +7,7 @@
 #include "../minilibx-linux/mlx.h"
 #include <X11/Xlib.h>
 #include "../Printf/ft_printf.h"
+#include "rt_math.h"
 
 
 typedef struct s_app 
@@ -28,5 +29,14 @@ int	handle_key(int keycode, void *param);
 int	handle_mouse(int button, int x, int y, void *param);
 int	handle_close(void *param);
 void recreate_image_and_draw(t_app *app);
+
+double clamp01(double v);
+int  rgb_to_int_local(t_rgb c);
+t_vec3	camera_right(t_vec3 forward);
+t_ray	generate_ray(t_scene *scene, t_app *app, int x, int y);
+int	shade_hit(t_scene *scene, t_hit hit);
+void	render_scene(t_app *app, t_scene *scene);
+int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light);
+
 
 #endif 
