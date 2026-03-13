@@ -97,11 +97,22 @@ int	main(int ac, char **av)
 	if (ac != 2)
 		return (perror("Wrong Usage. ./miniRT <input_file.rt>"), 1);
 	fd = open(av[1], O_RDONLY);
-	if (!validate(fd, &scene))
+	scene.ambient.ratio = 0.0;
+	scene.ambient.color.r = 0;
+	scene.ambient.color.g = 0;
+	scene.ambient.color.b = 0;
+	scene.camera.origin = vec3(0, 0, 0);
+	scene.camera.vector = vec3(0, 0, 1);
+	scene.camera.fov = 60.0;
+	scene.light = NULL;
+	scene.objects = NULL;
+	scene.nb_lights = 0;
+	scene.nb_objects = 0;
+	scene.has_ambient = 0;
+	scene.has_camera = 0;
+	if (validate(fd, &scene))
 		return (close(fd), perror("Error"), 1);
 	close(fd);
-
-
 	app.width = WIDTH;
 	app.height = HEIGHT;
 	app.mlx = mlx_init();

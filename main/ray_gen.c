@@ -71,24 +71,37 @@ t_ray	generate_ray(t_scene *scene, t_app *app, int x, int y)
     return (ray);
 }
 
-int	shade_hit(t_scene *scene, t_hit hit)
+int shade_hit(t_scene *scene, t_hit hit, t_vec3 cam_pos)
 {
-    t_light	*light;
-    t_vec3	light_dir;
-    double	n_dot_l;
-    double	intensity;
-    t_rgb	c;
+    t_light *light;
+    t_vec3 light_dir;
+    t_vec3 view_dir;
+    t_vec3 reflect_dir;
+    double ndotl;
+    double spec;
+    double intensity;
+    t_rgb c;
 
     intensity = scene->ambient.ratio;
+    if (intensity < 0.05)
+        intensity = 0.05;
+    view_dir = vec3_norm(vec3_sub(cam_pos, hit.point));
     light = scene->light;
     while (light)
     {
         if (!is_in_shadow(scene, hit, light))
         {
             light_dir = vec3_norm(vec3_sub(light->pos, hit.point));
-            n_dot_l = vec3_dot(hit.normal, light_dir);
-            if (n_dot_l > 0.0)
-                intensity += n_dot_l * light->b;
+            ndotl = vec3_dot(hit.normal, light_dir);
+            if (ndotl > 0.0)
+            {
+                intensity += ndotl * light->b * 0.7;
+                reflect_dir = vec3_sub(vec3_scale(hit.normal, 2.0 * ndotl), light_dir);
+                reflect_dir = vec3_norm(reflect_dir);
+                spec = vec3_dot(view_dir, reflect_dir);
+                if (spec > 0.0)
+                    intensity += pow(spec, 32.0) * 0.25 * light->b;
+            }
         }
         light = light->next;
     }
@@ -108,10 +121,10 @@ int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light)
 
     to_light = vec3_sub(light->pos, hit.point);
     light_dist = vec3_len(to_light);
-    shadow_ray.origin = vec3_add(hit.point, vec3_scale(hit.normal, 1e-4));
+    shadow_ray.origin = vec3_add(hit.point, vec3_scale(hit.normal, 1e-3));
     shadow_ray.direction = vec3_norm(to_light);
     blocker = closest_hit(shadow_ray, scene);
-    if (blocker.hit && blocker.t > 0.0 && blocker.t < light_dist)
+    if (blocker.hit && blocker.t > 1e-3 && blocker.t < light_dist)
         return (1);
     return (0);
 }
@@ -137,9 +150,11 @@ void	render_scene(t_app *app, t_scene *scene)
         {
             ray = generate_ray(scene, app, x, y);
             hit = closest_hit(ray, scene);
+			if (hit.hit && vec3_dot(hit.normal, ray.direction) > 0.0)
+    			hit.normal = vec3_scale(hit.normal, -1.0);
             color = 0x101020;
             if (hit.hit)
-                color = shade_hit(scene, hit);
+                color = shade_hit(scene, hit, scene->camera.origin);
             put_pixel(data, x, y, color, bpp, line);
             x++;
         }

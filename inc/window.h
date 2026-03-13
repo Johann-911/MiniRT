@@ -34,9 +34,9 @@ double clamp01(double v);
 int  rgb_to_int_local(t_rgb c);
 t_vec3	camera_right(t_vec3 forward);
 t_ray	generate_ray(t_scene *scene, t_app *app, int x, int y);
-int	shade_hit(t_scene *scene, t_hit hit);
+int     shade_hit(t_scene *scene, t_hit hit, t_vec3 cam_pos);;
 void	render_scene(t_app *app, t_scene *scene);
-int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light);
+int     is_in_shadow(t_scene *scene, t_hit hit, t_light *light);
 
 
 #endif 
