@@ -150,17 +150,20 @@ double vec3_len(t_vec3 v);
 t_vec3 vec3_norm(t_vec3 v);
 t_vec3	vec3_cross(t_vec3 a, t_vec3 b);
 double	ft_atod(const char *str);
+t_hit   closest_hit(t_ray ray, t_scene *scene);
 
 //intersection functions
 double	inter_sphere(t_ray ray, t_sphere sphere);
 double	inter_plane(t_ray ray, t_plane plane);
 double	inter_cylinder(t_ray ray, t_cylinder cylinder);
+double  inter_cone(t_ray ray, t_cone cone);
 
 
 // normal functions
 t_vec3	norm_sphere(t_vec3 point, t_sphere *sphere);
 t_vec3	norm_plane(t_plane *plane);
 t_vec3	normal_cylinder(t_vec3 point, t_cylinder *cylinder);
+t_vec3  normal_cone(t_vec3 point, t_cone *cone);
 
 
 

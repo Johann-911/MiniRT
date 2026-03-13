@@ -149,17 +149,24 @@ t_hit closest_hit(t_ray ray, t_scene * scene)
 
 double inter_sphere(t_ray ray, t_sphere sphere)
 {
-    t_vec3 dis;
+    t_vec3  dis;
     double  a;
     double  b;
     double  c;
-    double disc;
+    double  disc;
+    double  t1;
+    double  t2;
 
     dis = vec3_sub(ray.origin, sphere.center);
     a = vec3_dot(ray.direction, ray.direction);
-    b = 2 * vec3_dot(dis, ray.direction);
-    c = vec3_dot(dis,dis) - sphere.r * sphere.r;
-    return (discriminant(a, b, c));
+    b = 2.0 * vec3_dot(dis, ray.direction);
+    c = vec3_dot(dis, dis) - sphere.r * sphere.r;
+    disc = b * b - 4.0 * a * c;
+    if (disc < 0.0 || fabs(a) < 1e-6)
+        return (-1);
+    t1 = (-b - sqrt(disc)) / (2.0 * a);
+    t2 = (-b + sqrt(disc)) / (2.0 * a);
+    return (min_pos(t1, t2));
 }
 //plane intersect is simpler than sphere, only needs linear solution
 //denominator 0 means no hit, t < 0 plane is behind the ray
@@ -206,15 +213,24 @@ double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
 
 double inter_cylinder(t_ray ray, t_cylinder cylinder)
 {
-    t_vec3 axis;           
-    t_vec3 oc;             
-    t_vec3 proj_dir;       
-    t_vec3 proj_oc;        
-    double a, b, c, disc;
-    double t, t_side, t_cap1, t_cap2;
+    t_vec3 axis;
+    t_vec3 oc;
+    t_vec3 proj_dir;
+    t_vec3 proj_oc;
+    double a;
+    double b;
+    double c;
+    double disc;
+    double t1;
+    double t2;
+    double t_side;
+    double t_cap1;
+    double t_cap2;
     t_vec3 hit_point;
     double height_check;
-    t_vec3 cap_top, cap_bottom;
+    t_vec3 cap_top;
+    t_vec3 cap_bottom;
+
     axis = vec3_norm(cylinder.vector);
     oc = vec3_sub(ray.origin, cylinder.center);
     proj_dir = vec3_sub(ray.direction, vec3_scale(axis, vec3_dot(ray.direction, axis)));
@@ -223,21 +239,30 @@ double inter_cylinder(t_ray ray, t_cylinder cylinder)
     b = 2.0 * vec3_dot(proj_oc, proj_dir);
     c = vec3_dot(proj_oc, proj_oc) - (cylinder.radius * cylinder.radius);
     t_side = -1;
-    disc = b * b - 4 * a * c;
-    if (disc >= 0 && fabs(a) > 1e-6)
+    disc = b * b - 4.0 * a * c;
+    if (disc >= 0.0 && fabs(a) > 1e-6)
     {
-        t = (-b - sqrt(disc)) / (2.0 * a);
-        if (t > 0)
+        t1 = (-b - sqrt(disc)) / (2.0 * a);
+        t2 = (-b + sqrt(disc)) / (2.0 * a);
+
+        if (t1 > 0.0)
         {
-            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, t));
+            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
             height_check = vec3_dot(vec3_sub(hit_point, cylinder.center), axis);
-            if (height_check >= 0 && height_check <= cylinder.height)
-                t_side = t;
+            if (fabs(height_check) <= cylinder.height / 2.0)
+                t_side = t1;
+        }
+        if (t2 > 0.0)
+        {
+            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
+            height_check = vec3_dot(vec3_sub(hit_point, cylinder.center), axis);
+            if (fabs(height_check) <= cylinder.height / 2.0)
+                t_side = min_pos(t_side, t2);
         }
     }
-    cap_bottom = cylinder.center;
-    cap_top = vec3_add(cylinder.center, vec3_scale(axis, cylinder.height));
-    t_cap1 = inter_cap(ray, cap_bottom, vec3_scale(axis, -1), cylinder.radius);
+    cap_bottom = vec3_sub(cylinder.center, vec3_scale(axis, cylinder.height / 2.0));
+    cap_top = vec3_add(cylinder.center, vec3_scale(axis, cylinder.height / 2.0));
+    t_cap1 = inter_cap(ray, cap_bottom, vec3_scale(axis, -1.0), cylinder.radius);
     t_cap2 = inter_cap(ray, cap_top, axis, cylinder.radius);
     return (min_pos(t_side, min_pos(t_cap1, t_cap2)));
 }
@@ -255,8 +280,8 @@ double inter_cone(t_ray ray, t_cone cone)
     t_vec3 hit;
     double h;
 
-    axis = vec3_norm(cone.vector);
-    oc = vec3_sub(ray.origin, cone.center);
+    axis = vec3_norm(cone.axis);
+    oc = vec3_sub(ray.origin, cone.tip);
     k = (cone.radius / cone.height) * (cone.radius / cone.height);
     dot_dir_axis = vec3_dot(ray.direction, axis);
     dot_oc_axis = vec3_dot(oc, axis);
@@ -272,14 +297,14 @@ double inter_cone(t_ray ray, t_cone cone)
     if (t1 > 0)
     {
         hit = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
-        h = vec3_dot(vec3_sub(hit, cone.center), axis);
+        h = vec3_dot(vec3_sub(hit, cone.tip), axis);
         if (h >= 0 && h <= cone.height)
             return (t1);
     }
     if (t2 > 0)
     {
         hit = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
-        h = vec3_dot(vec3_sub(hit, cone.center), axis);
+        h = vec3_dot(vec3_sub(hit, cone.tip), axis);
         if (h >= 0 && h <= cone.height)
             return (t2);
     }
