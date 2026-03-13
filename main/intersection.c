@@ -271,13 +271,20 @@ double inter_cone(t_ray ray, t_cone cone)
 {
     t_vec3 axis;
     t_vec3 oc;
+    t_vec3 hit;
+    t_vec3 base_center;
     double k;
     double dot_dir_axis;
     double dot_oc_axis;
     double dot_dir_oc;
-    double a, b, c, disc;
-    double t, t1, t2;
-    t_vec3 hit;
+    double a;
+    double b;
+    double c;
+    double disc;
+    double t1;
+    double t2;
+    double t_side;
+    double t_base;
     double h;
 
     axis = vec3_norm(cone.axis);
@@ -289,24 +296,30 @@ double inter_cone(t_ray ray, t_cone cone)
     a = dot_dir_axis * dot_dir_axis - k * vec3_dot(ray.direction, ray.direction);
     b = 2.0 * (dot_dir_axis * dot_oc_axis - k * dot_dir_oc);
     c = dot_oc_axis * dot_oc_axis - k * vec3_dot(oc, oc);
-    disc = b * b - 4 * a * c;
-    if (disc < 0 || fabs(a) < 1e-6)
-        return (-1);
-    t1 = (-b - sqrt(disc)) / (2.0 * a);
-    t2 = (-b + sqrt(disc)) / (2.0 * a);
-    if (t1 > 0)
+    t_side = -1.0;
+    disc = b * b - 4.0 * a * c;
+    if (disc >= 0.0 && fabs(a) > 1e-6)
     {
-        hit = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
-        h = vec3_dot(vec3_sub(hit, cone.tip), axis);
-        if (h >= 0 && h <= cone.height)
-            return (t1);
+        t1 = (-b - sqrt(disc)) / (2.0 * a);
+        t2 = (-b + sqrt(disc)) / (2.0 * a);
+
+        if (t1 > 0.0)
+        {
+            hit = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
+            h = vec3_dot(vec3_sub(hit, cone.tip), axis);
+            if (h >= 0.0 && h <= cone.height)
+                t_side = t1;
+        }
+        if (t2 > 0.0)
+        {
+            hit = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
+            h = vec3_dot(vec3_sub(hit, cone.tip), axis);
+            if (h >= 0.0 && h <= cone.height)
+                t_side = min_pos(t_side, t2);
+        }
     }
-    if (t2 > 0)
-    {
-        hit = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
-        h = vec3_dot(vec3_sub(hit, cone.tip), axis);
-        if (h >= 0 && h <= cone.height)
-            return (t2);
-    }
-    return (-1);
+    base_center = vec3_add(cone.tip, vec3_scale(axis, cone.height));
+    t_base = inter_cap(ray, base_center, axis, cone.radius);
+
+    return (min_pos(t_side, t_base));
 }
