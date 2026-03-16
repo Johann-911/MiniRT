@@ -6,7 +6,7 @@
 #    By: stliu <stliu@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/24 00:00:00 by stliu             #+#    #+#              #
-#    Updated: 2026/03/16 16:49:24 by stliu            ###   ########.fr        #
+#    Updated: 2026/03/16 19:58:59 by stliu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,8 +41,10 @@ SRCS		= $(SRC_DIR)/main.c \
 			  $(SRC_DIR)/ray_gen.c \
 			  $(SRC_DIR)/rt_math.c \
 			  $(SRC_DIR)/rt_math_helper.c \
+			  $(SRC_DIR)/parse_helper.c \
 			  $(GNL_DIR)/get_next_line.c \
-			  $(GNL_DIR)/get_next_line_utils.c
+			  $(GNL_DIR)/get_next_line_utils.c \
+			  
 
 # Object files
 OBJS		= $(SRCS:%.c=$(OBJ_DIR)/%.o)

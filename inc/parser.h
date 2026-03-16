@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 17:53:23 by stliu             #+#    #+#             */
-/*   Updated: 2026/02/24 18:08:25 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/16 20:20:51 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,8 @@ void	free_split(char **split);
 void	init_scene(t_scene *scene);
 void	add_object(t_scene *scene, t_object *new);
 void	free_split(char **split);
+int	    token_count(char **tokens);
+char	**split_tokens(const char *line);
+int ft_isspace(char c);
+
 #endif
