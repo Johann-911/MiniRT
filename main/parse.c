@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/04 14:43:25 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/16 17:01:29 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,8 @@ int valid_ident(char *ident, t_scene *scene)
         return (valid_plane(ident, scene));
     if (ft_strncmp(ident, "cy", 2) == 0 && ft_isspace(ident[2]))
         return (valid_cylinder(ident, scene));
+    if (ft_strncmp(ident, "co", 2) == 0 && ft_isspace(ident[2]))
+        return (valid_cone(ident, scene));
     return (1);
 }
 
