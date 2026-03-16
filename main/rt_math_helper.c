@@ -31,35 +31,39 @@ t_vec3	vec3_norm(t_vec3 v)
 
 double	ft_atod(const char *str)
 {
-	size_t i;
-	double		integer;
-	int		sign;
-	int divisor;
+    size_t	i;
+    double	res;
+    double	sign;
+    double	div;
 
-	divisor = 10.0;
-	i = 0;
-	integer = 0;
-	sign = 1;
-	while ((str[i] >= 9 && str[i] <= 13) || (str[i] == 32))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = sign * (-1);
-		i++;
-	}
-	while (str[i] != '\0' && str[i] >= '0' && str[i] <= '9')
-	{
-		integer = (integer * 10) + (str[i] - '0');
-		i++;
-	}
-	if(str[i] == '.')
-		i++;
-	while (str[i] != '\0' && str[i] >= '0' && str[i] <= '9')
-	{
-	    integer += (str[i] - '0') / divisor;
-        divisor *= 10.0;
+    i = 0;
+    res = 0.0;
+    sign = 1.0;
+    div = 10.0;
+    while (str[i] && ((str[i] >= 9 && str[i] <= 13) || str[i] == ' '))
         i++;
-	}
-	return (sign * integer);
+
+    /* sign */
+    if (str[i] == '-' || str[i] == '+')
+    {
+        if (str[i] == '-')
+            sign = -1.0;
+        i++;
+    }
+    while (str[i] >= '0' && str[i] <= '9')
+    {
+        res = res * 10.0 + (double)(str[i] - '0');
+        i++;
+    }
+
+    if (str[i] == '.')
+        i++;
+    while (str[i] >= '0' && str[i] <= '9')
+    {
+        res += (double)(str[i] - '0') / div;
+        div *= 10.0;
+        i++;
+    }
+    return (sign * res);
 }
+
