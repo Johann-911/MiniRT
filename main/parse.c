@@ -85,20 +85,6 @@ typedef struct s_cylinder
 
 */
 
-void	free_split(char **split)
-{
-    int	i;
-
-    if (!split)
-        return ;
-    i = 0;
-    while (split[i])
-    {
-        free(split[i]);
-        i++;
-    }
-    free(split);
-}
 
 void	append_object(t_scene *scene, t_object *new_obj)
 {
@@ -135,12 +121,7 @@ int validate(int fd, t_scene *scene)
     return (0);
 }
 
-int ft_isspace(char c)
-{
-    if (c == ' ' || c == '\t')
-        return (1);
-    return (0);
-}
+
 int valid_ident(char *ident, t_scene *scene)
 {
     if (!ident)
