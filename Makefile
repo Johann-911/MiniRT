@@ -20,7 +20,7 @@ INCLUDES	= -I./inc -I./Printf -I./Printf/Libft -I"./minilibx-linux" -I./GetNextL
 # Directories
 SRC_DIR		= main
 OBJ_DIR		= obj
-GNL_DIR		= GetNextLine
+GNL_DIR		= GNL
 
 # Libraries
 PRINTF_DIR	= Printf
