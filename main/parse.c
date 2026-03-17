@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/16 17:01:29 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/17 17:37:44 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,55 @@ int validate(int fd, t_scene *scene)
     return (0);
 }
 
+static int	parse_vec3_token(const char *token, t_vec3 *out)
+{
+    char	**parts;
+
+    parts = ft_split(token, ',');
+    if (!parts || token_count(parts) != 3)
+    {
+        free_split(parts);
+        return (1);
+    }
+	out->x = ft_atod(parts[0]);
+	out->y = ft_atod(parts[1]);
+	out->z = ft_atod(parts[2]);
+    free_split(parts);
+    return (0);
+}
+
+static int	parse_rgb_token(const char *token, t_rgb *out)
+{
+    char	**parts;
+
+    parts = ft_split(token, ',');
+    if (!parts || token_count(parts) != 3)
+    {
+        free_split(parts);
+        return (1);
+    }
+	out->r = ft_atoi(parts[0]);
+	out->g = ft_atoi(parts[1]);
+	out->b = ft_atoi(parts[2]);
+    free_split(parts);
+    if (out->r < 0 || out->r > 255 || out->g < 0 || out->g > 255
+        || out->b < 0 || out->b > 255)
+        return (1);
+    return (0);
+}
+
+static int	parse_dir_token(const char *token, t_vec3 *out)
+{
+    if (parse_vec3_token(token, out))
+        return (1);
+    if (out->x < -1.0 || out->x > 1.0 || out->y < -1.0 || out->y > 1.0
+        || out->z < -1.0 || out->z > 1.0)
+        return (1);
+    if (vec3_len(*out) < 1e-9)
+        return (1);
+    *out = vec3_norm(*out);
+    return (0);
+}
 
 int valid_ident(char *ident, t_scene *scene)
 {
@@ -157,309 +206,174 @@ int check_line(char *line, t_scene *scene)
 
 int valid_ambient(char *line, t_scene *scene)
 {
-    int i;
-    
-    i = 1;
-    while (ft_isspace(line[i]))
-        i++;
-    scene->ambient.ratio = ft_atod(&line[i]);
-    while (line[i] && !ft_isspace(line[i]))
-        i++;
-    while (ft_isspace(line[i]))
-        i++;
-    scene->ambient.color.r = ft_atoi(&line[i]);
-    while (line[i] && line[i] != ',')
-        i++;
-    if (line[i] == ',')
-        i++;
-    scene->ambient.color.g = ft_atoi(&line[i]);
-    while (line[i] && line[i] != ',')
-        i++;
-    if (line[i] == ',')
-        i++;
-    scene->ambient.color.b = ft_atoi(&line[i]);
-    return (0);
+	char	**tokens;
+
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 3 || scene->has_ambient)
+		return (free_split(tokens), 1);
+	scene->ambient.ratio = ft_atod(tokens[1]);
+	if (scene->ambient.ratio < 0.0 || scene->ambient.ratio > 1.0
+		|| parse_rgb_token(tokens[2], &scene->ambient.color))
+		return (free_split(tokens), 1);
+	scene->has_ambient = 1;
+	free_split(tokens);
+	return (0);
 }
 
 int valid_camera(char *line, t_scene *scene)
 {
-    char **tokens;
-    char **cords;
-    char **vector;
+	char	**tokens;
 
-    tokens = ft_split(line, ' ');
-    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
-        return (free_split(tokens), 1);
-    cords = ft_split(tokens[1], ',');
-    if (!cords || !cords[0] || !cords[1] || !cords[2])
-        return (free_split(cords), free_split(tokens), 1);
-    scene->camera.origin.x = ft_atod(cords[0]);
-    scene->camera.origin.y = ft_atod(cords[1]);
-    scene->camera.origin.z = ft_atod(cords[2]);
-    vector = ft_split(tokens[2], ',');
-    if (!vector || !vector[0] || !vector[1] || !vector[2])
-        return (free_split(vector), free_split(cords), free_split(tokens), 1);
-    scene->camera.vector.x = ft_atod(vector[0]);
-    scene->camera.vector.y = ft_atod(vector[1]);
-    scene->camera.vector.z = ft_atod(vector[2]);
-    scene->camera.vector = vec3_norm(scene->camera.vector);
-    if (scene->camera.vector.x < -1.0 || scene->camera.vector.x > 1.0
-		|| scene->camera.vector.y < -1.0 || scene->camera.vector.y > 1.0
-		|| scene->camera.vector.z < -1.0 || scene->camera.vector.z > 1.0)
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 4 || scene->has_camera)
 		return (free_split(tokens), 1);
-    scene->camera.fov = ft_atod(tokens[3]);
-    if (scene->camera.fov < 0 || scene->camera.fov > 180)
-        return (free_split(tokens), 1);
-    free_split(tokens);
-    return (0);
+	scene->camera.fov = ft_atod(tokens[3]);
+	if (parse_vec3_token(tokens[1], &scene->camera.origin)
+		|| parse_dir_token(tokens[2], &scene->camera.vector)
+		|| scene->camera.fov < 0.0 || scene->camera.fov > 180.0)
+		return (free_split(tokens), 1);
+	scene->has_camera = 1;
+	free_split(tokens);
+	return (0);
 }
 
 int valid_light(char *line, t_scene *scene)
 {
-    char    **tokens;
-    char    **coords;
-    char    **color;
-    t_light *new_light;
+	char	**tokens;
+	t_light	*new_light;
 
-    tokens = ft_split(line, ' ');
-    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
-        return (free_split(tokens), 1);
-    new_light = malloc(sizeof(t_light));
-    if (!new_light)
-        return (free_split(tokens), 1);
-    new_light->next = NULL;
-    coords = ft_split(tokens[1], ',');
-    if (!coords || !coords[0] || !coords[1] || !coords[2])
-        return (free(new_light), free_split(coords), free_split(tokens), 1);
-    new_light->pos.x = ft_atod(coords[0]);
-    new_light->pos.y = ft_atod(coords[1]);
-    new_light->pos.z = ft_atod(coords[2]);
-    free_split(coords);
-    new_light->b = ft_atod(tokens[2]);
-    if (new_light->b < 0.0 || new_light->b > 1.0)
-        return (free(new_light), free_split(tokens), 1);
-
-    color = ft_split(tokens[3], ',');
-    if (!color || !color[0] || !color[1] || !color[2])
-        return (free(new_light), free_split(color), free_split(tokens), 1);
-    new_light->color.r = ft_atoi(color[0]);
-    new_light->color.g = ft_atoi(color[1]);
-    new_light->color.b = ft_atoi(color[2]);
-    free_split(color);
-    if (new_light->color.r < 0 || new_light->color.r > 255
-        || new_light->color.g < 0 || new_light->color.g > 255
-        || new_light->color.b < 0 || new_light->color.b > 255)
-        return (free(new_light), free_split(tokens), 1);
-
-    if (!scene->light)
-        scene->light = new_light;
-    else
-    {
-        t_light *cur = scene->light;
-        while (cur->next)
-            cur = cur->next;
-        cur->next = new_light;
-    }
-    free_split(tokens);
-    return (0);
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 4)
+		return (free_split(tokens), 1);
+	new_light = malloc(sizeof(t_light));
+	if (!new_light)
+		return (free_split(tokens), 1);
+	new_light->next = NULL;
+	new_light->b = ft_atod(tokens[2]);
+	if (parse_vec3_token(tokens[1], &new_light->pos)
+		|| new_light->b < 0.0 || new_light->b > 1.0
+		|| parse_rgb_token(tokens[3], &new_light->color))
+		return (free(new_light), free_split(tokens), 1);
+	if (!scene->light)
+		scene->light = new_light;
+	else
+	{
+		t_light *cur = scene->light;
+		while (cur->next)
+			cur = cur->next;
+		cur->next = new_light;
+	}
+	scene->nb_lights++;
+	free_split(tokens);
+	return (0);
 }
 
 int valid_sphere(char *line, t_scene *scene)
 {
-    char **tokens;
-    char **coords;
-    char **color;
-    t_object *new;
+	char		**tokens;
+	t_object	*new;
+	double		diameter;
 
-    tokens = ft_split(line, ' ');
-    if(!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
-        return (free_split(tokens), 1);
-    new = malloc(sizeof(t_object));
-    if (!new)
-        return (free_split(tokens), 1);
-    new->type = OBJ_SPHERE;
-    new->next = NULL;
-    coords = ft_split(tokens[1], ',');
-    if(!coords || !coords[0] || !coords[1] || !coords[2])
-        return (free_split(coords), free_split(tokens), 1);
-    new->data.sphere.center.x = ft_atod(coords[0]);
-    new->data.sphere.center.y = ft_atod(coords[1]);
-    new->data.sphere.center.z = ft_atod(coords[2]);
-    free_split(coords);
-    new->data.sphere.r = ft_atod(tokens[2]) / 2.0;
-    color = ft_split(tokens[3], ',');
-    if(!color || !color[0] || !color[1] || !color[2])
-        return(free_split(color), free_split(tokens), 1);
-    new->data.sphere.color.r = ft_atoi(color[0]); 
-    new->data.sphere.color.g = ft_atoi(color[1]);
-    new->data.sphere.color.b = ft_atoi(color[2]);
-    free_split(color);
-    if (!scene->objects)
-        scene->objects = new;
-    else
-        append_object(scene, new);
-    free_split(tokens);
-    return (0);
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 4)
+		return (free_split(tokens), 1);
+	new = malloc(sizeof(t_object));
+	if (!new)
+		return (free_split(tokens), 1);
+	new->type = OBJ_SPHERE;
+	new->next = NULL;
+	diameter = ft_atod(tokens[2]);
+	if (parse_vec3_token(tokens[1], &new->data.sphere.center)
+		|| diameter <= 0.0
+		|| parse_rgb_token(tokens[3], &new->data.sphere.color))
+		return (free(new), free_split(tokens), 1);
+	new->data.sphere.r = diameter / 2.0;
+	add_object(scene, new);
+	scene->nb_objects++;
+	free_split(tokens);
+	return (0);
 }
 
 int valid_plane(char *line, t_scene *scene)
 {
-    char **tokens;
-    char **point;
-    char **normal;
-    char **color;
-    t_object *new;
+	char		**tokens;
+	t_object	*new;
 
-    tokens = ft_split(line, ' ');
-    if(!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
-        return (free_split(tokens), 1);
-    new = malloc(sizeof(t_object));
-    if (!new)
-        return (free_split(tokens), 1);
-    new->type = OBJ_PLANE;
-    new->next = NULL;
-    point = ft_split(tokens[1],',');
-    if(!point)
-        return (free(new), free_split(point), free_split(tokens), 1);
-    new->data.plane.point.x = ft_atod(point[0]);
-    new->data.plane.point.y = ft_atod(point[1]);
-    new->data.plane.point.z = ft_atod(point[2]);
-    free_split(point);
-    normal = ft_split(tokens[2], ',');
-    if(!normal || !normal[0] || !normal[1] || !normal[2])
-        return (free(new), free_split(normal), free_split(tokens), 1);
-    new->data.plane.normal.x = ft_atod(normal[0]);
-    new->data.plane.normal.y = ft_atod(normal[1]);
-    new->data.plane.normal.z = ft_atod(normal[2]);
-    new->data.plane.normal = vec3_norm(new->data.plane.normal);
-    free_split(normal);
-    color = ft_split(tokens[3], ',');
-    if(!color || !color[0] || !color[1] || !color[2])
-        return (free(new), free_split(color), free_split(tokens), 1);
-    new->data.plane.color.r =  ft_atoi(color[0]);
-    new->data.plane.color.g =  ft_atoi(color[1]);
-    new->data.plane.color.b =  ft_atoi(color[2]);
-    free_split(color);
-    if (!scene->objects)
-        scene->objects = new;
-    else
-        append_object(scene, new);
-    free_split(tokens);
-    return (0);
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 4)
+		return (free_split(tokens), 1);
+	new = malloc(sizeof(t_object));
+	if (!new)
+		return (free_split(tokens), 1);
+	new->type = OBJ_PLANE;
+	new->next = NULL;
+	if (parse_vec3_token(tokens[1], &new->data.plane.point)
+		|| parse_dir_token(tokens[2], &new->data.plane.normal)
+		|| parse_rgb_token(tokens[3], &new->data.plane.color))
+		return (free(new), free_split(tokens), 1);
+	add_object(scene, new);
+	scene->nb_objects++;
+	free_split(tokens);
+	return (0);
 }
 
 ///stephan
 int valid_cylinder(char *line, t_scene *scene)
 {
-    char **tokens;
-    char **cords;
-    char **vector;
-    char **color;
-    t_object *new;
+	char		**tokens;
+	t_object	*new;
+	double		diameter;
 
-    tokens = ft_split(line, ' ');
-    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
-        return (free_split(tokens), 1);
-    new = malloc(sizeof(t_object));
-    if (!new)
-        return (free_split(tokens), 1);
-    new->type = OBJ_CYLINDER;
-    new->next = NULL;
-
-    cords = ft_split(tokens[1], ',');
-    if (!cords || !cords[0] || !cords[1] || !cords[2])
-        return (free(new), free_split(cords), free_split(tokens), 1);
-    new->data.cylinder.center.x = ft_atod(cords[0]);
-    new->data.cylinder.center.y = ft_atod(cords[1]);
-    new->data.cylinder.center.z = ft_atod(cords[2]);
-    free_split(cords);
-    vector = ft_split(tokens[2], ',');
-    if (!vector || !vector[0] || !vector[1] || !vector[2])
-        return (free(new), free_split(vector), free_split(tokens), 1);
-    new->data.cylinder.vector.x = ft_atod(vector[0]);
-    new->data.cylinder.vector.y = ft_atod(vector[1]);
-    new->data.cylinder.vector.z = ft_atod(vector[2]);
-    new->data.cylinder.vector = vec3_norm(new->data.cylinder.vector);
-    free_split(vector);
-    if (new->data.cylinder.vector.x < -1.0 || new->data.cylinder.vector.x > 1.0
-        || new->data.cylinder.vector.y < -1.0 || new->data.cylinder.vector.y > 1.0
-        || new->data.cylinder.vector.z < -1.0 || new->data.cylinder.vector.z > 1.0)
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 6)
+		return (free_split(tokens), 1);
+	new = malloc(sizeof(t_object));
+	if (!new)
+		return (free_split(tokens), 1);
+	new->type = OBJ_CYLINDER;
+	new->next = NULL;
+	diameter = ft_atod(tokens[3]);
+	new->data.cylinder.height = ft_atod(tokens[4]);
+	if (parse_vec3_token(tokens[1], &new->data.cylinder.center)
+		|| parse_dir_token(tokens[2], &new->data.cylinder.vector)
+		|| diameter <= 0.0
+		|| new->data.cylinder.height <= 0.0
+		|| parse_rgb_token(tokens[5], &new->data.cylinder.color))
 		return (free(new), free_split(tokens), 1);
-    new->data.cylinder.radius = ft_atod(tokens[3]) / 2.0;
-    new->data.cylinder.height = ft_atod(tokens[4]);
-    color = ft_split(tokens[5], ',');
-    if (!color || !color[0] || !color[1] || !color[2])
-        return (free(new), free_split(color), free_split(tokens), 1);
-    new->data.cylinder.color.r = ft_atoi(color[0]);
-    new->data.cylinder.color.g = ft_atoi(color[1]);
-    new->data.cylinder.color.b = ft_atoi(color[2]);
-    free_split(color);
-    if (new->data.cylinder.color.r < 0 || new->data.cylinder.color.r > 255
-        || new->data.cylinder.color.g < 0 || new->data.cylinder.color.g > 255
-        || new->data.cylinder.color.b < 0 || new->data.cylinder.color.b > 255 )
-        return (free(new), free_split(tokens), 1);
-    if (!scene->objects)
-        scene->objects = new;
-    else
-        append_object(scene, new);
-    free_split(tokens);
-    return (0);
+	new->data.cylinder.radius = diameter / 2.0;
+	add_object(scene, new);
+	scene->nb_objects++;
+	free_split(tokens);
+	return (0);
 }
 ///stephan
 int valid_cone(char *line, t_scene *scene)
 {
-    char **tokens;
-    char **cords;
-    char **vector;
-    char **color;
-    t_object *new;
+	char		**tokens;
+	t_object	*new;
+	double		diameter;
 
-    tokens = ft_split(line, ' ');
-    if (!tokens || !tokens[0] || !tokens[1] || !tokens[2] || !tokens[3])
-        return (free_split(tokens), 1);
-    new = malloc(sizeof(t_object));
-    if (!new)
-        return (free_split(tokens), 1);
-    new->type = OBJ_CONE;
-    new->next = NULL;
-    
-    cords = ft_split(tokens[1], ',');
-    if (!cords || !cords[0] || !cords[1] || !cords[2])
-        return (free(new), free_split(cords), free_split(tokens), 1);
-    new->data.cone.tip.x = ft_atod(cords[0]);
-    new->data.cone.tip.y = ft_atod(cords[1]);
-    new->data.cone.tip.z = ft_atod(cords[2]);
-    vector = ft_split(tokens[2], ',');
-    if (!vector || !vector[0] || !vector[1] || !vector[2])
-        return (free(new), free_split(vector), free_split(tokens), 1);
-    new->data.cone.axis.x = ft_atod(vector[0]);
-    new->data.cone.axis.y = ft_atod(vector[1]);
-    new->data.cone.axis.z = ft_atod(vector[2]);
-    new->data.cone.axis = vec3_norm(new->data.cone.axis);
-    free_split(vector);
-    if (new->data.cone.axis.x < -1.0 || new->data.cone.axis.x > 1.0
-        || new->data.cone.axis.y < -1.0 || new->data.cone.axis.y > 1.0
-        || new->data.cone.axis.z < -1.0 || new->data.cone.axis.z > 1.0)
+	tokens = split_tokens(line);
+	if (!tokens || token_count(tokens) != 6)
+		return (free_split(tokens), 1);
+	new = malloc(sizeof(t_object));
+	if (!new)
+		return (free_split(tokens), 1);
+	new->type = OBJ_CONE;
+	new->next = NULL;
+	diameter = ft_atod(tokens[3]);
+	new->data.cone.height = ft_atod(tokens[4]);
+	if (parse_vec3_token(tokens[1], &new->data.cone.tip)
+		|| parse_dir_token(tokens[2], &new->data.cone.axis)
+		|| diameter <= 0.0
+		|| new->data.cone.height <= 0.0
+		|| parse_rgb_token(tokens[5], &new->data.cone.color))
 		return (free(new), free_split(tokens), 1);
-    new->data.cone.radius = ft_atod(tokens[3]) / 2.0;
-    new->data.cone.height = ft_atod(tokens[4]);
-    color = ft_split(tokens[5], ',');
-    if (!color || !color[0] || !color[1] || !color[2])
-        return (free(new), free_split(color), free_split(tokens), 1);
-    new->data.cone.color.r = ft_atoi(color[0]);
-    new->data.cone.color.g = ft_atoi(color[1]);
-    new->data.cone.color.b = ft_atoi(color[2]);
-    free_split(color);
-    if (new->data.cone.color.r < 0 || new->data.cone.color.r > 255
-        || new->data.cone.color.g < 0 || new->data.cone.color.g > 255
-        || new->data.cone.color.b < 0 || new->data.cone.color.b > 255 )
-        return (free(new), free_split(tokens), 1);
-    if (!scene->objects)
-        scene->objects = new;
-    else
-        append_object(scene, new);
-    free_split(tokens);
-    return (0);
+	new->data.cone.radius = diameter / 2.0;
+	add_object(scene, new);
+	scene->nb_objects++;
+	free_split(tokens);
+	return (0);
 }
 
 

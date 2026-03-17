@@ -111,7 +111,7 @@ int	main(int ac, char **av)
 	scene.has_ambient = 0;
 	scene.has_camera = 0;
 	if (validate(fd, &scene))
-		return (close(fd), perror("Error"), 1);
+		return (close(fd), ft_printf("Invalid .rt file"), 1);
 	close(fd);
 	app.width = WIDTH;
 	app.height = HEIGHT;
