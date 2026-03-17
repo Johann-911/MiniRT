@@ -267,113 +267,147 @@ int valid_light(char *line, t_scene *scene)
 	free_split(tokens);
 	return (0);
 }
+int	parse_checker_flag(char **tokens, int count, int base, t_object *obj)
+{
+    int i;
+
+    obj->checker = 0;
+    if (count == base)
+        return (0);
+    if (count != base + 2)
+        return (1);
+    i = base;
+    if (ft_strncmp(tokens[i], "cb", 2) != 0 || tokens[i][2] != '\0')
+        return (1);
+    i = base + 1;
+    if (ft_strncmp(tokens[i], "true", 4) != 0 || tokens[i][4] != '\0')
+        return (1);
+    obj->checker = 1;
+    return (0);
+}
 
 int valid_sphere(char *line, t_scene *scene)
 {
-	char		**tokens;
-	t_object	*new;
-	double		diameter;
+    char		**tokens;
+    t_object	*new;
+    double		diameter;
+    int			count;
 
-	tokens = split_tokens(line);
-	if (!tokens || token_count(tokens) != 4)
-		return (free_split(tokens), 1);
-	new = malloc(sizeof(t_object));
-	if (!new)
-		return (free_split(tokens), 1);
-	new->type = OBJ_SPHERE;
-	new->next = NULL;
-	diameter = ft_atod(tokens[2]);
-	if (parse_vec3_token(tokens[1], &new->data.sphere.center)
-		|| diameter <= 0.0
-		|| parse_rgb_token(tokens[3], &new->data.sphere.color))
-		return (free(new), free_split(tokens), 1);
-	new->data.sphere.r = diameter / 2.0;
-	add_object(scene, new);
-	scene->nb_objects++;
-	free_split(tokens);
-	return (0);
+    tokens = split_tokens(line);
+    if (!tokens)
+        return (1);
+    count = token_count(tokens);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_SPHERE;
+    new->next = NULL;
+    if (parse_checker_flag(tokens, count, 4, new))
+        return (free(new), free_split(tokens), 1);
+    diameter = ft_atod(tokens[2]);
+    if (parse_vec3_token(tokens[1], &new->data.sphere.center)
+        || diameter <= 0.0
+        || parse_rgb_token(tokens[3], &new->data.sphere.color))
+        return (free(new), free_split(tokens), 1);
+    new->data.sphere.r = diameter / 2.0;
+    add_object(scene, new);
+    scene->nb_objects++;
+    free_split(tokens);
+    return (0);
 }
 
 int valid_plane(char *line, t_scene *scene)
 {
-	char		**tokens;
-	t_object	*new;
+    char		**tokens;
+    t_object	*new;
+    int			count;
 
-	tokens = split_tokens(line);
-	if (!tokens || token_count(tokens) != 4)
-		return (free_split(tokens), 1);
-	new = malloc(sizeof(t_object));
-	if (!new)
-		return (free_split(tokens), 1);
-	new->type = OBJ_PLANE;
-	new->next = NULL;
-	if (parse_vec3_token(tokens[1], &new->data.plane.point)
-		|| parse_dir_token(tokens[2], &new->data.plane.normal)
-		|| parse_rgb_token(tokens[3], &new->data.plane.color))
-		return (free(new), free_split(tokens), 1);
-	add_object(scene, new);
-	scene->nb_objects++;
-	free_split(tokens);
-	return (0);
+    tokens = split_tokens(line);
+    if (!tokens)
+        return (1);
+    count = token_count(tokens);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_PLANE;
+    new->next = NULL;
+    if (parse_checker_flag(tokens, count, 4, new))
+        return (free(new), free_split(tokens), 1);
+    if (parse_vec3_token(tokens[1], &new->data.plane.point)
+        || parse_dir_token(tokens[2], &new->data.plane.normal)
+        || parse_rgb_token(tokens[3], &new->data.plane.color))
+        return (free(new), free_split(tokens), 1);
+    add_object(scene, new);
+    scene->nb_objects++;
+    free_split(tokens);
+    return (0);
 }
 
 ///stephan
 int valid_cylinder(char *line, t_scene *scene)
 {
-	char		**tokens;
-	t_object	*new;
-	double		diameter;
+    char		**tokens;
+    t_object	*new;
+    double		diameter;
+    int			count;
 
-	tokens = split_tokens(line);
-	if (!tokens || token_count(tokens) != 6)
-		return (free_split(tokens), 1);
-	new = malloc(sizeof(t_object));
-	if (!new)
-		return (free_split(tokens), 1);
-	new->type = OBJ_CYLINDER;
-	new->next = NULL;
-	diameter = ft_atod(tokens[3]);
-	new->data.cylinder.height = ft_atod(tokens[4]);
-	if (parse_vec3_token(tokens[1], &new->data.cylinder.center)
-		|| parse_dir_token(tokens[2], &new->data.cylinder.vector)
-		|| diameter <= 0.0
-		|| new->data.cylinder.height <= 0.0
-		|| parse_rgb_token(tokens[5], &new->data.cylinder.color))
-		return (free(new), free_split(tokens), 1);
-	new->data.cylinder.radius = diameter / 2.0;
-	add_object(scene, new);
-	scene->nb_objects++;
-	free_split(tokens);
-	return (0);
+    tokens = split_tokens(line);
+    if (!tokens)
+        return (1);
+    count = token_count(tokens);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_CYLINDER;
+    new->next = NULL;
+    if (parse_checker_flag(tokens, count, 6, new))
+        return (free(new), free_split(tokens), 1);
+    diameter = ft_atod(tokens[3]);
+    new->data.cylinder.height = ft_atod(tokens[4]);
+    if (parse_vec3_token(tokens[1], &new->data.cylinder.center)
+        || parse_dir_token(tokens[2], &new->data.cylinder.vector)
+        || diameter <= 0.0
+        || new->data.cylinder.height <= 0.0
+        || parse_rgb_token(tokens[5], &new->data.cylinder.color))
+        return (free(new), free_split(tokens), 1);
+    new->data.cylinder.radius = diameter / 2.0;
+    add_object(scene, new);
+    scene->nb_objects++;
+    free_split(tokens);
+    return (0);
 }
 ///stephan
 int valid_cone(char *line, t_scene *scene)
 {
-	char		**tokens;
-	t_object	*new;
-	double		diameter;
+    char		**tokens;
+    t_object	*new;
+    double		diameter;
+    int			count;
 
-	tokens = split_tokens(line);
-	if (!tokens || token_count(tokens) != 6)
-		return (free_split(tokens), 1);
-	new = malloc(sizeof(t_object));
-	if (!new)
-		return (free_split(tokens), 1);
-	new->type = OBJ_CONE;
-	new->next = NULL;
-	diameter = ft_atod(tokens[3]);
-	new->data.cone.height = ft_atod(tokens[4]);
-	if (parse_vec3_token(tokens[1], &new->data.cone.tip)
-		|| parse_dir_token(tokens[2], &new->data.cone.axis)
-		|| diameter <= 0.0
-		|| new->data.cone.height <= 0.0
-		|| parse_rgb_token(tokens[5], &new->data.cone.color))
-		return (free(new), free_split(tokens), 1);
-	new->data.cone.radius = diameter / 2.0;
-	add_object(scene, new);
-	scene->nb_objects++;
-	free_split(tokens);
-	return (0);
+    tokens = split_tokens(line);
+    if (!tokens)
+        return (1);
+    count = token_count(tokens);
+    new = malloc(sizeof(t_object));
+    if (!new)
+        return (free_split(tokens), 1);
+    new->type = OBJ_CONE;
+    new->next = NULL;
+    if (parse_checker_flag(tokens, count, 6, new))
+        return (free(new), free_split(tokens), 1);
+    diameter = ft_atod(tokens[3]);
+    new->data.cone.height = ft_atod(tokens[4]);
+    if (parse_vec3_token(tokens[1], &new->data.cone.tip)
+        || parse_dir_token(tokens[2], &new->data.cone.axis)
+        || diameter <= 0.0
+        || new->data.cone.height <= 0.0
+        || parse_rgb_token(tokens[5], &new->data.cone.color))
+        return (free(new), free_split(tokens), 1);
+    new->data.cone.radius = diameter / 2.0;
+    add_object(scene, new);
+    scene->nb_objects++;
+    free_split(tokens);
+    return (0);
 }
 
 

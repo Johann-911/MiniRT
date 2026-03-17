@@ -44,3 +44,4 @@ int	rgb_scale_int(int color, double factor)
 	b = (int)(c.b * factor);
 	return (rgb_to_int(r, g, b));
 }
+

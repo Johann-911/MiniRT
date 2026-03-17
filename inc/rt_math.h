@@ -4,6 +4,9 @@
 #include <math.h>
 #include <stdbool.h>
 
+#ifndef M_PI
+# define M_PI 3.14159265358979323846
+#endif
 
 typedef struct s_vec3
 {
@@ -31,6 +34,7 @@ typedef struct s_plane
 	t_vec3	point;
 	t_vec3 	normal;
 	t_rgb 	color;
+
 }t_plane;
 
 typedef struct s_cylinder
@@ -91,6 +95,7 @@ typedef struct s_object
 	t_obj_type	type;
 	t_objects	data;
 	struct s_object *next;
+	int checker;
 }	t_object;
 
 

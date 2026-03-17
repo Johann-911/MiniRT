@@ -94,9 +94,139 @@ void	set_normal(t_hit *result, t_object *obj, t_vec3 hit_point)
     else if (obj->type == OBJ_CONE)
         result->normal = normal_cone(hit_point, &obj->data.cone);
 }
-
-void	set_color(t_hit *result, t_object *obj)
+static t_rgb	checker_planar(t_vec3 p)
 {
+    double	size;
+    int		ix;
+    int		iz;
+    t_rgb	c;
+
+    size = 10.0;
+    ix = (int)floor(p.x / size);
+    iz = (int)floor(p.z / size);
+    if ((ix + iz) % 2 == 0)
+    {
+        c.r = 255;
+        c.g = 255;
+        c.b = 255;
+        return (c);
+    }
+    c.r = 0;
+    c.g = 0;
+    c.b = 0;
+    return (c);
+}
+
+static t_rgb	checker_sphere(t_vec3 n)
+{
+    double	u;
+    double	v;
+    int		iu;
+    int		iv;
+    t_rgb	c;
+    
+    u = 0.5 + atan2(n.z, n.x) / (2.0 * M_PI);
+    v = 0.5 - asin(n.y) / M_PI;
+    iu = (int)floor(u * 8.0);
+    iv = (int)floor(v * 8.0);
+    if ((iu + iv) % 2 == 0)
+    {
+        c.r = 255;
+        c.g = 255;
+        c.b = 255;
+        return (c);
+    }
+    c.r = 0;
+    c.g = 0;
+    c.b = 0;
+    return (c);
+}
+
+static t_rgb	checker_cylinder(t_vec3 p, t_cylinder *cy)
+{
+    t_vec3	axis;
+    t_vec3	rel;
+    t_vec3	proj;
+    t_vec3	radial;
+    double	theta;
+    double	u;
+    double	v;
+    int		iu;
+    int		iv;
+    t_rgb	c;
+
+    axis = vec3_norm(cy->vector);
+    rel = vec3_sub(p, cy->center);
+    proj = vec3_scale(axis, vec3_dot(rel, axis));
+    radial = vec3_sub(rel, proj);
+    theta = atan2(radial.z, radial.x);
+    u = (theta + M_PI) / (2.0 * M_PI);
+    v = (vec3_dot(rel, axis) / cy->height) + 0.5;
+    iu = (int)floor(u * 10.0);
+    iv = (int)floor(v * 10.0);
+    if ((iu + iv) % 2 == 0)
+    {
+        c.r = 255;
+        c.g = 255;
+        c.b = 255;
+        return (c);
+    }
+    c.r = 0;
+    c.g = 0;
+    c.b = 0;
+    return (c);
+}
+
+static t_rgb	checker_cone(t_vec3 p, t_cone *co)
+{
+    t_vec3	axis;
+    t_vec3	rel;
+    t_vec3	proj;
+    t_vec3	radial;
+    double	theta;
+    double	u;
+    double	v;
+    int		iu;
+    int		iv;
+    t_rgb	c;
+
+    axis = vec3_norm(co->axis);
+    rel = vec3_sub(p, co->tip);
+    proj = vec3_scale(axis, vec3_dot(rel, axis));
+    radial = vec3_sub(rel, proj);
+    theta = atan2(radial.z, radial.x);
+    u = (theta + M_PI) / (2.0 * M_PI);
+    v = vec3_dot(rel, axis) / co->height;
+    iu = (int)floor(u * 10.0);
+    iv = (int)floor(v * 10.0);
+    if ((iu + iv) % 2 == 0)
+    {
+        c.r = 255;
+        c.g = 255;
+        c.b = 255;
+        return (c);
+    }
+    c.r = 0;
+    c.g = 0;
+    c.b = 0;
+    return (c);
+}
+
+
+void	set_color(t_hit *result, t_object *obj, t_vec3 hit_point, t_vec3 normal)
+{
+    if (obj->checker)
+    {
+        if (obj->type == OBJ_SPHERE)
+            result->color = checker_sphere(normal);
+        else if (obj->type == OBJ_CYLINDER)
+            result->color = checker_cylinder(hit_point, &obj->data.cylinder);
+        else if (obj->type == OBJ_CONE)
+            result->color = checker_cone(hit_point, &obj->data.cone);
+        else
+            result->color = checker_planar(hit_point);
+        return ;
+    }
     if (obj->type == OBJ_SPHERE)
         result->color = obj->data.sphere.color;
     else if (obj->type == OBJ_PLANE)
@@ -140,12 +270,14 @@ t_hit closest_hit(t_ray ray, t_scene * scene)
             hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, dist));
             result.point = hit_point;
             set_normal(&result, obj, hit_point);
-            set_color(&result, obj);
+            set_color(&result, obj, hit_point, result.normal);
         }
         obj = obj->next;
     }
     return result;
 }
+
+
 
 double inter_sphere(t_ray ray, t_sphere sphere)
 {
@@ -302,7 +434,6 @@ double inter_cone(t_ray ray, t_cone cone)
     {
         t1 = (-b - sqrt(disc)) / (2.0 * a);
         t2 = (-b + sqrt(disc)) / (2.0 * a);
-
         if (t1 > 0.0)
         {
             hit = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
@@ -320,6 +451,5 @@ double inter_cone(t_ray ray, t_cone cone)
     }
     base_center = vec3_add(cone.tip, vec3_scale(axis, cone.height));
     t_base = inter_cap(ray, base_center, axis, cone.radius);
-
     return (min_pos(t_side, t_base));
 }
