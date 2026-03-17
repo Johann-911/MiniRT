@@ -42,8 +42,6 @@ double	ft_atod(const char *str)
     div = 10.0;
     while (str[i] && ((str[i] >= 9 && str[i] <= 13) || str[i] == ' '))
         i++;
-
-    /* sign */
     if (str[i] == '-' || str[i] == '+')
     {
         if (str[i] == '-')
@@ -55,7 +53,6 @@ double	ft_atod(const char *str)
         res = res * 10.0 + (double)(str[i] - '0');
         i++;
     }
-
     if (str[i] == '.')
         i++;
     while (str[i] >= '0' && str[i] <= '9')
