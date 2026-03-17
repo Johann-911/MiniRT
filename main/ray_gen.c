@@ -191,5 +191,5 @@ void	render_scene(t_app *app, t_scene *scene)
         }
         y++;
     }
-    mlx_put_image_to_window(app->mlx, app->win, app->img, 0
+    mlx_put_image_to_window(app->mlx, app->win, app->img, 0, 0);
 }
