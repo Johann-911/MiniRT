@@ -11,6 +11,29 @@ double clamp01(double v)
 	return v;
 }
 
+static t_vec3	color_from_rgb(t_rgb c)
+{
+    return (vec3(c.r / 255.0, c.g / 255.0, c.b / 255.0));
+}
+
+static t_vec3	color_mul(t_vec3 a, t_vec3 b)
+{
+    return (vec3(a.x * b.x, a.y * b.y, a.z * b.z));
+}
+
+static t_rgb	rgb_from_color(t_vec3 c)
+{
+    t_rgb out;
+
+    c.x = clamp01(c.x);
+    c.y = clamp01(c.y);
+    c.z = clamp01(c.z);
+    out.r = (int)round(c.x * 255.0);
+    out.g = (int)round(c.y * 255.0);
+    out.b = (int)round(c.z * 255.0);
+    return (out);
+}
+
 int  rgb_to_int_local(t_rgb c)
 {
     int	r;
@@ -79,12 +102,18 @@ int shade_hit(t_scene *scene, t_hit hit, t_vec3 cam_pos)
     t_vec3 reflect_dir;
     double ndotl;
     double spec;
-    double intensity;
-    t_rgb c;
+    t_vec3 out_color;
+    t_vec3 obj_color;
+    t_vec3 amb_color;
+    t_vec3 light_color;
+    double diffuse;
+    double specular;
 
-    intensity = scene->ambient.ratio;
-    if (intensity < 0.05)
-        intensity = 0.05;
+    obj_color = color_from_rgb(hit.color);
+    amb_color = color_from_rgb(scene->ambient.color);
+    out_color = vec3_scale(color_mul(obj_color, amb_color), scene->ambient.ratio);
+    if (scene->ambient.ratio < 0.05)
+        out_color = vec3_add(out_color, vec3_scale(obj_color, 0.05));
     view_dir = vec3_norm(vec3_sub(cam_pos, hit.point));
     light = scene->light;
     while (light)
@@ -95,21 +124,23 @@ int shade_hit(t_scene *scene, t_hit hit, t_vec3 cam_pos)
             ndotl = vec3_dot(hit.normal, light_dir);
             if (ndotl > 0.0)
             {
-                intensity += ndotl * light->b * 0.7;
+                light_color = color_from_rgb(light->color);
+                diffuse = ndotl * light->b * 0.7;
+                out_color = vec3_add(out_color,
+                        vec3_scale(color_mul(obj_color, light_color), diffuse));
                 reflect_dir = vec3_sub(vec3_scale(hit.normal, 2.0 * ndotl), light_dir);
                 reflect_dir = vec3_norm(reflect_dir);
                 spec = vec3_dot(view_dir, reflect_dir);
                 if (spec > 0.0)
-                    intensity += pow(spec, 32.0) * 0.25 * light->b;
+				{
+					specular = pow(spec, 32.0) * 0.25 * light->b;
+					out_color = vec3_add(out_color, vec3_scale(light_color, specular));
+				}
             }
         }
         light = light->next;
     }
-    intensity = clamp01(intensity);
-    c.r = (int)(hit.color.r * intensity);
-    c.g = (int)(hit.color.g * intensity);
-    c.b = (int)(hit.color.b * intensity);
-    return (rgb_to_int_local(c));
+    return (rgb_to_int_local(rgb_from_color(out_color)));
 }
 
 int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light)
@@ -160,5 +191,5 @@ void	render_scene(t_app *app, t_scene *scene)
         }
         y++;
     }
-    mlx_put_image_to_window(app->mlx, app->win, app->img, 0, 0);
+    mlx_put_image_to_window(app->mlx, app->win, app->img, 0
 }
