@@ -39,12 +39,10 @@ int valid_plane(char *line, t_scene *scene);
 int valid_cylinder(char *line, t_scene *scene);
 int valid_cone(char *line, t_scene *scene);
 double	ft_atod(const char *str);
-void	free_split(char **split);
 void	init_scene(t_scene *scene);
 void	add_object(t_scene *scene, t_object *new);
 void	free_split(char **split);
 int	    token_count(char **tokens);
 char	**split_tokens(const char *line);
-int ft_isspace(char c);
 
 #endif

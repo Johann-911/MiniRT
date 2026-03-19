@@ -85,15 +85,32 @@ double discriminant(double a, double b, double c)
 
 void	set_normal(t_hit *result, t_object *obj, t_vec3 hit_point)
 {
+    t_vec3	local_p;
+
     if (obj->type == OBJ_SPHERE)
+    {
         result->normal = norm_sphere(hit_point, &obj->data.sphere);
+        local_p = vec3_sub(hit_point, obj->data.sphere.center);
+    }
     else if (obj->type == OBJ_PLANE)
+    {
         result->normal = norm_plane(&obj->data.plane);
+        local_p = hit_point;
+    }
     else if (obj->type == OBJ_CYLINDER)
+    {
         result->normal = normal_cylinder(hit_point, &obj->data.cylinder);
-    else if (obj->type == OBJ_CONE)
+        local_p = vec3_sub(hit_point, obj->data.cylinder.center);
+    }
+    else
+    {
         result->normal = normal_cone(hit_point, &obj->data.cone);
+        local_p = vec3_sub(hit_point, obj->data.cone.tip);
+    }
+    if (obj->checker)
+        result->normal = perturb_normal(result->normal, local_p, 0.35, 0.45);
 }
+
 static t_rgb	checker_planar(t_vec3 p)
 {
     double	size;

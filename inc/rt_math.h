@@ -164,7 +164,9 @@ t_vec3	norm_plane(t_plane *plane);
 t_vec3	normal_cylinder(t_vec3 point, t_cylinder *cylinder);
 t_vec3  normal_cone(t_vec3 point, t_cone *cone);
 
+//bump mapping 
 
-
+t_vec3	perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren, double freq);
+t_vec3	bump_gradient(t_vec3 p, double freq);
 
 #endif
