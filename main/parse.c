@@ -321,8 +321,8 @@ int	valid_sphere(char *line, t_scene *scene)
 		return (free_split(tokens), 1);
 	new->type = OBJ_SPHERE;
 	new->next = NULL;
-	if (parse_checker_flag(tokens, count, 4, new))
-		return (free(new), free_split(tokens), 1);
+	if (parse_flags(tokens, count, 4, new))
+        return (free(new), free_split(tokens), 1);
 	if (parse_double_strict(tokens[2], &diameter)
 		|| parse_vec3_token(tokens[1], &new->data.sphere.center)
 		|| diameter <= 0.0
@@ -350,8 +350,8 @@ int	valid_plane(char *line, t_scene *scene)
 		return (free_split(tokens), 1);
 	new->type = OBJ_PLANE;
 	new->next = NULL;
-	if (parse_checker_flag(tokens, count, 4, new))
-		return (free(new), free_split(tokens), 1);
+	if (parse_flags(tokens, count, 4, new))
+        return (free(new), free_split(tokens), 1);
 	if (parse_vec3_token(tokens[1], &new->data.plane.point)
 		|| parse_dir_token(tokens[2], &new->data.plane.normal)
 		|| parse_rgb_token(tokens[3], &new->data.plane.color))
@@ -378,8 +378,8 @@ int	valid_cylinder(char *line, t_scene *scene)
 		return (free_split(tokens), 1);
 	new->type = OBJ_CYLINDER;
 	new->next = NULL;
-	if (parse_checker_flag(tokens, count, 6, new))
-		return (free(new), free_split(tokens), 1);
+	if (parse_flags(tokens, count, 6, new))
+        return (free(new), free_split(tokens), 1);
 	if (parse_double_strict(tokens[3], &diameter)
 		|| parse_double_strict(tokens[4], &new->data.cylinder.height)
 		|| parse_vec3_token(tokens[1], &new->data.cylinder.center)
@@ -411,8 +411,8 @@ int	valid_cone(char *line, t_scene *scene)
 		return (free_split(tokens), 1);
 	new->type = OBJ_CONE;
 	new->next = NULL;
-	if (parse_checker_flag(tokens, count, 6, new))
-		return (free(new), free_split(tokens), 1);
+	if (parse_flags(tokens, count, 6, new))
+        return (free(new), free_split(tokens), 1);
 	if (parse_double_strict(tokens[3], &diameter)
 		|| parse_double_strict(tokens[4], &new->data.cone.height)
 		|| parse_vec3_token(tokens[1], &new->data.cone.tip)

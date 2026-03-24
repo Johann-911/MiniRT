@@ -96,6 +96,7 @@ typedef struct s_object
 	t_objects	data;
 	struct s_object *next;
 	int checker;
+	int bump;
 }	t_object;
 
 
@@ -168,5 +169,8 @@ t_vec3  normal_cone(t_vec3 point, t_cone *cone);
 
 t_vec3	perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren, double freq);
 t_vec3	bump_gradient(t_vec3 p, double freq);
+int	parse_flags(char **tokens, int count, int base, t_object *obj);
+int	parse_bump_flag(char **tokens, int count, int base, t_object *obj);
+
 
 #endif

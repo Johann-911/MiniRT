@@ -107,8 +107,8 @@ void	set_normal(t_hit *result, t_object *obj, t_vec3 hit_point)
         result->normal = normal_cone(hit_point, &obj->data.cone);
         local_p = vec3_sub(hit_point, obj->data.cone.tip);
     }
-    if (obj->checker)
-        result->normal = perturb_normal(result->normal, local_p, 0.35, 0.45);
+    if (obj->bump)
+        result->normal = perturb_normal(result->normal, local_p, 0.08, 1.0);
 }
 
 static t_rgb	checker_planar(t_vec3 p)

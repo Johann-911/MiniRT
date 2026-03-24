@@ -39,6 +39,7 @@ SRCS		= $(SRC_DIR)/main.c \
 			  $(SRC_DIR)/colours.c \
 			  $(SRC_DIR)/intersection.c \
 			  $(SRC_DIR)/ray_gen.c \
+			  $(SRC_DIR)/bump_mapping.c \
 			  $(SRC_DIR)/rt_math.c \
 			  $(SRC_DIR)/rt_math_helper.c \
 			  $(SRC_DIR)/parse_helper.c \
