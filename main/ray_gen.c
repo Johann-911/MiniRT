@@ -146,7 +146,6 @@ int shade_hit(t_scene *scene, t_hit hit, t_vec3 cam_pos)
 int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light)
 {
     t_ray	shadow_ray;
-    t_hit	blocker;
     t_vec3	to_light;
     double	light_dist;
 
@@ -154,10 +153,7 @@ int	is_in_shadow(t_scene *scene, t_hit hit, t_light *light)
     light_dist = vec3_len(to_light);
     shadow_ray.origin = vec3_add(hit.point, vec3_scale(hit.normal, 1e-3));
     shadow_ray.direction = vec3_norm(to_light);
-    blocker = closest_hit(shadow_ray, scene);
-    if (blocker.hit && blocker.t > 1e-3 && blocker.t < light_dist)
-        return (1);
-    return (0);
+    return (any_hit_before(shadow_ray, scene, light_dist));
 }
 
 void	render_scene(t_app *app, t_scene *scene)
@@ -171,15 +167,33 @@ void	render_scene(t_app *app, t_scene *scene)
     t_ray	ray;
     t_hit	hit;
     int		color;
+    t_vec3	forward;
+    t_vec3	right;
+    t_vec3	up;
+    double	aspect;
+    double	fov_scale;
+    double	px;
+    double	py;
+    double	pi;
 
     data = mlx_get_data_addr(app->img, &bpp, &line, &endian);
+    pi = acos(-1.0);
+    forward = vec3_norm(scene->camera.vector);
+    right = camera_right(forward);
+    up = vec3_norm(vec3_cross(right, forward));
+    aspect = (double)app->width / (double)app->height;
+    fov_scale = tan((scene->camera.fov * 0.5) * (pi / 180.0));
     y = 0;
     while (y < app->height)
     {
         x = 0;
         while (x < app->width)
         {
-            ray = generate_ray(scene, app, x, y);
+            px = (2.0 * ((x + 0.5) / (double)app->width) - 1.0) * aspect * fov_scale;
+            py = (1.0 - 2.0 * ((y + 0.5) / (double)app->height)) * fov_scale;
+            ray.origin = scene->camera.origin;
+            ray.direction = vec3_norm(vec3_add(forward,
+                        vec3_add(vec3_scale(right, px), vec3_scale(up, py))));
             hit = closest_hit(ray, scene);
 			if (hit.hit && vec3_dot(hit.normal, ray.direction) > 0.0)
     			hit.normal = vec3_scale(hit.normal, -1.0);

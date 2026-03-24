@@ -1,6 +1,42 @@
 #include "../inc/window.h"
 #include "../inc/parser.h"
 #include <fcntl.h>
+#include <sys/time.h>
+
+static long	current_time_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000L) + (tv.tv_usec / 1000L));
+}
+
+int	render_loop(void *param)
+{
+	t_app		*app;
+	static long	last_sample = 0;
+	static int	frames = 0;
+	static double	fps = 0.0;
+	long		now;
+	char		fps_text[32];
+
+	app = (t_app *)param;
+	now = current_time_ms();
+	if (last_sample == 0)
+		last_sample = now;
+	frames++;
+	if (now - last_sample >= 1000)
+	{
+		fps = (double)frames * 1000.0 / (double)(now - last_sample);
+		frames = 0;
+		last_sample = now;
+	}
+	render_scene(app, app->scene);
+	snprintf(fps_text, sizeof(fps_text), "FPS: %.1f", fps);
+	mlx_string_put(app->mlx, app->win, 12, 22, 0x000000, fps_text);
+	mlx_string_put(app->mlx, app->win, 10, 20, 0x00FFFFFF, fps_text);
+	return (0);
+}
 
 void	put_pixel(char *data, int x, int y, int color, int bpp, int line)
 {
@@ -133,10 +169,12 @@ int	main(int ac, char **av)
 		perror("mlx_new_image");
 		return (1);
 	}
+	app.scene = &scene;
 	render_scene(&app, &scene);
 	
 	mlx_hook(app.win, 2, 1L << 0, handle_key, &app);
 	mlx_hook(app.win, 17, 0, handle_close, &app);
+	mlx_loop_hook(app.mlx, render_loop, &app);
 	mlx_loop(app.mlx);
 	return (0);
 }

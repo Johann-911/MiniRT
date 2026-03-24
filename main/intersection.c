@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   intersection.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stephan <stephan@student.42.fr>            +#+  +:+       +#+        */
+/*   By: stliu <stliu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 14:43:39 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/11 12:12:13 by stephan          ###   ########.fr       */
+/*   Updated: 2026/03/25 00:04:39 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,6 +292,22 @@ t_hit closest_hit(t_ray ray, t_scene * scene)
         obj = obj->next;
     }
     return result;
+}
+
+int	any_hit_before(t_ray ray, t_scene *scene, double max_t)
+{
+    t_object	*obj;
+    double		dist;
+
+    obj = scene->objects;
+    while (obj)
+    {
+        dist = get_dist(ray, obj);
+        if (dist > 1e-3 && dist < max_t)
+            return (1);
+        obj = obj->next;
+    }
+    return (0);
 }
 
 

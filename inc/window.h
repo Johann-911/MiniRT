@@ -17,6 +17,7 @@ typedef struct s_app
     void *img;
     int width;
     int height;
+    t_scene *scene;
 }	t_app;
 
 # define HEIGHT 1000
@@ -28,6 +29,7 @@ void	fill_gradient(t_app *app);
 int	handle_key(int keycode, void *param);
 int	handle_mouse(int button, int x, int y, void *param);
 int	handle_close(void *param);
+int	render_loop(void *param);
 void recreate_image_and_draw(t_app *app);
 
 double clamp01(double v);

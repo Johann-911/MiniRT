@@ -4,9 +4,7 @@
 t_vec3	bump_gradient(t_vec3 p, double freq)
 {
     t_vec3	g;
-    double	s;
 
-    s = sin(p.x * freq) * sin(p.z * freq);
     g.x = cos(p.x * freq) * sin(p.z * freq);
     g.y = 0.0;
     g.z = sin(p.x * freq) * cos(p.z * freq);

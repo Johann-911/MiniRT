@@ -151,6 +151,7 @@ t_vec3 vec3_norm(t_vec3 v);
 t_vec3	vec3_cross(t_vec3 a, t_vec3 b);
 double	ft_atod(const char *str);
 t_hit   closest_hit(t_ray ray, t_scene *scene);
+int		any_hit_before(t_ray ray, t_scene *scene, double max_t);
 
 //intersection functions
 double	inter_sphere(t_ray ray, t_sphere sphere);
