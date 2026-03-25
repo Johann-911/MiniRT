@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   intersection.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stliu <stliu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 14:43:39 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/25 00:04:39 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/25 14:31:06 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,12 +436,13 @@ double inter_cone(t_ray ray, t_cone cone)
 {
     t_vec3 axis;
     t_vec3 oc;
-    t_vec3 hit;
     t_vec3 base_center;
     double k;
-    double dot_dir_axis;
-    double dot_oc_axis;
-    double dot_dir_oc;
+    double dv;
+    double ov;
+    double dd;
+    double od;
+    double oo;
     double a;
     double b;
     double c;
@@ -454,13 +455,18 @@ double inter_cone(t_ray ray, t_cone cone)
 
     axis = vec3_norm(cone.axis);
     oc = vec3_sub(ray.origin, cone.tip);
-    k = (cone.radius / cone.height) * (cone.radius / cone.height);
-    dot_dir_axis = vec3_dot(ray.direction, axis);
-    dot_oc_axis = vec3_dot(oc, axis);
-    dot_dir_oc = vec3_dot(ray.direction, oc);
-    a = dot_dir_axis * dot_dir_axis - k * vec3_dot(ray.direction, ray.direction);
-    b = 2.0 * (dot_dir_axis * dot_oc_axis - k * dot_dir_oc);
-    c = dot_oc_axis * dot_oc_axis - k * vec3_dot(oc, oc);
+
+    k = cone.radius / cone.height;
+    k = k * k;
+    dv = vec3_dot(ray.direction, axis);
+    ov = vec3_dot(oc, axis);
+    dd = vec3_dot(ray.direction, ray.direction);
+    od = vec3_dot(oc, ray.direction);
+    oo = vec3_dot(oc, oc);
+
+    a = (1.0 + k) * dv * dv - dd;
+    b = 2.0 * ((1.0 + k) * dv * ov - od);
+    c = (1.0 + k) * ov * ov - oo;
     t_side = -1.0;
     disc = b * b - 4.0 * a * c;
     if (disc >= 0.0 && fabs(a) > 1e-6)
@@ -469,15 +475,13 @@ double inter_cone(t_ray ray, t_cone cone)
         t2 = (-b + sqrt(disc)) / (2.0 * a);
         if (t1 > 0.0)
         {
-            hit = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
-            h = vec3_dot(vec3_sub(hit, cone.tip), axis);
+            h = ov + t1 * dv;
             if (h >= 0.0 && h <= cone.height)
                 t_side = t1;
         }
         if (t2 > 0.0)
         {
-            hit = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
-            h = vec3_dot(vec3_sub(hit, cone.tip), axis);
+            h = ov + t2 * dv;
             if (h >= 0.0 && h <= cone.height)
                 t_side = min_pos(t_side, t2);
         }
