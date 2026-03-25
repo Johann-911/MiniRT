@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_helper.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
+/*   By: stliu <stliu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 19:52:54 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/16 20:12:16 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/25 21:59:40 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,13 +134,6 @@ int	parse_flags(char **tokens, int count, int base, t_object *obj)
                 || tokens[i + 1][4] != '\0')
                 return (1);
             obj->checker = 1;
-        }
-        else if (ft_strncmp(tokens[i], "bm", 2) == 0 && tokens[i][2] == '\0')
-        {
-            if (ft_strncmp(tokens[i + 1], "true", 4) != 0
-                || tokens[i + 1][4] != '\0')
-                return (1);
-            obj->bump = 1;
         }
         else
             return (1);
