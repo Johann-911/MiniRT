@@ -46,69 +46,6 @@ void	put_pixel(char *data, int x, int y, int color, int bpp, int line)
 	*(int *)(data + offset) = color;
 }
 
-void	draw_image(t_app *app)
-{
-	int		x;
-	int		y;
-	int		bpp;
-	int		line;
-	int		endian;
-	char	*data;
-	int r;
-	int g;
-	int b;
-	int color;
-
-	data = mlx_get_data_addr(app->img, &bpp, &line, &endian);
-	y = 0;
-	while (y < app->height)
-	{
-		x = 0;
-		while (x < app->width)
-		{
-			r = (x * 255) / app->width;
-			g = (y * 255) / app->height;
-			b = 128;
-			color = (r << 16) | (g << 8) | b;
-			put_pixel(data, x, y, color, bpp, line);
-			x++;
-		}
-		y++;
-	}
-}
-
-
-void	fill_gradient(t_app *app)
-{
-	int		bpp;
-	int		line;
-	int		endian;
-	char	*data;
-	int		r;
-	int		g;
-	int		b;
-	int		color;
-
-	int x, y;
-	data = mlx_get_data_addr(app->img, &bpp, &line, &endian);
-	y = 0;
-	while (y < app->height)
-	{
-		x = 0;
-		while (x < app->width)
-		{
-			r = (x * 255) / app->width;
-			g = (y * 255) / app->height;
-			b = 128;
-			color = (r << 16) | (g << 8) | b;
-			put_pixel(data, x, y, color, bpp, line);
-			x++;
-		}
-		y++;
-	}
-	mlx_put_image_to_window(app->mlx, app->win, app->img, 0, 0);
-}
-
 int	handle_key(int keycode, void *param)
 {
 	(void)param;
@@ -174,7 +111,6 @@ int	main(int ac, char **av)
 	
 	mlx_hook(app.win, 2, 1L << 0, handle_key, &app);
 	mlx_hook(app.win, 17, 0, handle_close, &app);
-	mlx_loop_hook(app.mlx, render_loop, &app);
 	mlx_loop(app.mlx);
 	return (0);
 }

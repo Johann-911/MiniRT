@@ -80,7 +80,7 @@ t_ray	generate_ray(t_scene *scene, t_app *app, int x, int y)
     double	py;
     double	pi;
 
-    pi = acos(-1.0);
+    pi = M_PI;
     forward = vec3_norm(scene->camera.vector);
     right = camera_right(forward);
     up = vec3_norm(vec3_cross(right, forward));
@@ -177,7 +177,7 @@ void	render_scene(t_app *app, t_scene *scene)
     double	pi;
 
     data = mlx_get_data_addr(app->img, &bpp, &line, &endian);
-    pi = acos(-1.0);
+    pi = M_PI;
     forward = vec3_norm(scene->camera.vector);
     right = camera_right(forward);
     up = vec3_norm(vec3_cross(right, forward));

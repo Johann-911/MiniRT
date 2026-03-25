@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stliu <stliu@student.42heilbronn.de>       +#+  +:+       +#+         #
+#    By: stliu <stliu@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/24 00:00:00 by stliu             #+#    #+#              #
-#    Updated: 2026/03/24 23:49:11 by stliu            ###   ########.fr        #
+#    Updated: 2026/03/25 15:40:20 by stliu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME		= miniRT
 
 # Compiler and flags
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -g
+CFLAGS		= -Wall -Wextra -Werror -O2 -ffast-math
 INCLUDES	= -I./inc -I./Printf -I./Printf/Libft -I"./minilibx-linux" -I./GetNextLine
 
 # Directories

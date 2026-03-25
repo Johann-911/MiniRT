@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 21:16:14 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/16 21:16:15 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/25 15:17:30 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 #include "../inc/rt_math.h"
 #include <math.h>
 #include <stdint.h>
-#include <aio.h>
+#include <stddef.h>
+
 
 t_vec3 vec3_cross(t_vec3 a, t_vec3 b)
 {	
