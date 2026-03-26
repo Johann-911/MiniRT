@@ -159,74 +159,70 @@ static t_rgb	checker_sphere(t_vec3 n)
     return (c);
 }
 
+static void	cy_uv(t_vec3 p, t_cylinder *cy)
+{
+	cy->axis = vec3_norm(cy->vector);
+	cy->proj_dir = vec3_sub(p, cy->center);
+	cy->proj_oc = vec3_sub(cy->proj_dir, vec3_scale(cy->axis,
+				vec3_dot(cy->proj_dir, cy->axis)));
+	cy->h_check = (atan2(cy->proj_oc.z, cy->proj_oc.x)
+			+ M_PI) / (2.0 * M_PI);
+	cy->disc = (vec3_dot(cy->proj_dir, cy->axis)
+			/ cy->height) + 0.5;
+}
+
 static t_rgb	checker_cylinder(t_vec3 p, t_cylinder *cy)
 {
-    t_vec3	axis;
-    t_vec3	rel;
-    t_vec3	proj;
-    t_vec3	radial;
-    double	theta;
-    double	u;
-    double	v;
-    int		iu;
-    int		iv;
-    t_rgb	c;
+	int	iu;
+	int	iv;
+	t_rgb	c;
 
-    axis = vec3_norm(cy->vector);
-    rel = vec3_sub(p, cy->center);
-    proj = vec3_scale(axis, vec3_dot(rel, axis));
-    radial = vec3_sub(rel, proj);
-    theta = atan2(radial.z, radial.x);
-    u = (theta + M_PI) / (2.0 * M_PI);
-    v = (vec3_dot(rel, axis) / cy->height) + 0.5;
-    iu = (int)floor(u * 10.0);
-    iv = (int)floor(v * 10.0);
-    if ((iu + iv) % 2 == 0)
-    {
-        c.r = 255;
-        c.g = 255;
-        c.b = 255;
-        return (c);
-    }
-    c.r = 0;
-    c.g = 0;
-    c.b = 0;
-    return (c);
+	cy_uv(p, cy);
+	iu = (int)floor(cy->h_check * 10.0);
+	iv = (int)floor(cy->disc * 10.0);
+	if ((iu + iv) % 2 == 0)
+	{
+		c.r = 255;
+		c.g = 255;
+		c.b = 255;
+		return (c);
+	}
+	c.r = 0;
+	c.g = 0;
+	c.b = 0;
+	return (c);
+}
+
+static void	co_uv(t_vec3 p, t_cone *co)
+{
+	co->axis = vec3_norm(co->axis);
+	co->oc = vec3_sub(p, co->tip);
+	co->dv = vec3_dot(co->oc, co->axis);
+	co->oc = vec3_sub(co->oc, vec3_scale(co->axis, co->dv));
+	co->h = (atan2(co->oc.z, co->oc.x) + M_PI) / (2.0 * M_PI);
+	co->disc = co->dv / co->height;
 }
 
 static t_rgb	checker_cone(t_vec3 p, t_cone *co)
 {
-    t_vec3	axis;
-    t_vec3	rel;
-    t_vec3	proj;
-    t_vec3	radial;
-    double	theta;
-    double	u;
-    double	v;
-    int		iu;
-    int		iv;
-    t_rgb	c;
+	int	iu;
+	int	iv;
+	t_rgb	c;
 
-    axis = vec3_norm(co->axis);
-    rel = vec3_sub(p, co->tip);
-    proj = vec3_scale(axis, vec3_dot(rel, axis));
-    radial = vec3_sub(rel, proj);
-    theta = atan2(radial.z, radial.x);
-    u = (theta + M_PI) / (2.0 * M_PI);
-    v = vec3_dot(rel, axis) / co->height;
-    iu = (int)floor(u * 10.0);
-    iv = (int)floor(v * 10.0);
-    if ((iu + iv) % 2 == 0)
-    {
-        c.r = 255;
-        c.g = 255;
-        c.b = 255;
-        return (c);
-    }
-    c.r = 0;
-    c.g = 0;
-    c.b = 0;
-    return (c);
+	co_uv(p, co);
+	iu = (int)floor(co->h * 10.0);
+	iv = (int)floor(co->disc * 10.0);
+	if ((iu + iv) % 2 == 0)
+	{
+		c.r = 255;
+		c.g = 255;
+		c.b = 255;
+		return (c);
+	}
+	c.r = 0;
+	c.g = 0;
+	c.b = 0;
+	return (c);
 }
 
 
@@ -376,117 +372,134 @@ double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
     return t;
 }
 
-double inter_cylinder(t_ray ray, t_cylinder cylinder)
+static void	setup_cyl(t_ray ray, t_cylinder *cy)
 {
-    t_vec3 axis;
-    t_vec3 oc;
-    t_vec3 proj_dir;
-    t_vec3 proj_oc;
-    double a;
-    double b;
-    double c;
-    double disc;
-    double t1;
-    double t2;
-    double t_side;
-    double t_cap1;
-    double t_cap2;
-    t_vec3 hit_point;
-    double height_check;
-    t_vec3 cap_top;
-    t_vec3 cap_bottom;
-
-    axis = vec3_norm(cylinder.vector);
-    oc = vec3_sub(ray.origin, cylinder.center);
-    proj_dir = vec3_sub(ray.direction, vec3_scale(axis, vec3_dot(ray.direction, axis)));
-    proj_oc = vec3_sub(oc, vec3_scale(axis, vec3_dot(oc, axis)));
-    a = vec3_dot(proj_dir, proj_dir);
-    b = 2.0 * vec3_dot(proj_oc, proj_dir);
-    c = vec3_dot(proj_oc, proj_oc) - (cylinder.radius * cylinder.radius);
-    t_side = -1;
-    disc = b * b - 4.0 * a * c;
-    if (disc >= 0.0 && fabs(a) > 1e-6)
-    {
-        t1 = (-b - sqrt(disc)) / (2.0 * a);
-        t2 = (-b + sqrt(disc)) / (2.0 * a);
-
-        if (t1 > 0.0)
-        {
-            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, t1));
-            height_check = vec3_dot(vec3_sub(hit_point, cylinder.center), axis);
-            if (fabs(height_check) <= cylinder.height / 2.0)
-                t_side = t1;
-        }
-        if (t2 > 0.0)
-        {
-            hit_point = vec3_add(ray.origin, vec3_scale(ray.direction, t2));
-            height_check = vec3_dot(vec3_sub(hit_point, cylinder.center), axis);
-            if (fabs(height_check) <= cylinder.height / 2.0)
-                t_side = min_pos(t_side, t2);
-        }
-    }
-    cap_bottom = vec3_sub(cylinder.center, vec3_scale(axis, cylinder.height / 2.0));
-    cap_top = vec3_add(cylinder.center, vec3_scale(axis, cylinder.height / 2.0));
-    t_cap1 = inter_cap(ray, cap_bottom, vec3_scale(axis, -1.0), cylinder.radius);
-    t_cap2 = inter_cap(ray, cap_top, axis, cylinder.radius);
-    return (min_pos(t_side, min_pos(t_cap1, t_cap2)));
+	cy->axis = vec3_norm(cy->vector);
+	cy->oc = vec3_sub(ray.origin, cy->center);
+	cy->proj_dir = vec3_sub(ray.direction,
+			vec3_scale(cy->axis, vec3_dot(ray.direction, cy->axis)));
+	cy->proj_oc = vec3_sub(cy->oc,
+			vec3_scale(cy->axis, vec3_dot(cy->oc, cy->axis)));
 }
 
-double inter_cone(t_ray ray, t_cone cone)
+static double	disc_cyl(t_cylinder *cy)
 {
-    t_vec3 axis;
-    t_vec3 oc;
-    t_vec3 base_center;
-    double k;
-    double dv;
-    double ov;
-    double dd;
-    double od;
-    double oo;
-    double a;
-    double b;
-    double c;
-    double disc;
-    double t1;
-    double t2;
-    double t_side;
-    double t_base;
-    double h;
+	cy->a = vec3_dot(cy->proj_dir, cy->proj_dir);
+	cy->b = 2.0 * vec3_dot(cy->proj_oc, cy->proj_dir);
+	cy->c = vec3_dot(cy->proj_oc, cy->proj_oc)
+		- (cy->radius * cy->radius);
+	cy->disc = cy->b * cy->b - 4.0 * cy->a * cy->c;
+	return (cy->disc);
+}
 
-    axis = vec3_norm(cone.axis);
-    oc = vec3_sub(ray.origin, cone.tip);
+static double	test_side(t_ray ray, t_cylinder *cy)
+{
+	double	t1;
+	double	t2;
+	double	ts;
+	double	sqrt_d;
 
-    k = cone.radius / cone.height;
-    k = k * k;
-    dv = vec3_dot(ray.direction, axis);
-    ov = vec3_dot(oc, axis);
-    dd = vec3_dot(ray.direction, ray.direction);
-    od = vec3_dot(oc, ray.direction);
-    oo = vec3_dot(oc, oc);
+	ts = -1;
+	sqrt_d = sqrt(cy->disc);
+	t1 = (-cy->b - sqrt_d) / (2.0 * cy->a);
+	t2 = (-cy->b + sqrt_d) / (2.0 * cy->a);
+	if (t1 > 0.0)
+	{
+		cy->h_check = vec3_dot(vec3_sub(vec3_add(ray.origin,
+						vec3_scale(ray.direction, t1)),
+					cy->center), cy->axis);
+		if (fabs(cy->h_check) <= cy->height / 2.0)
+			ts = t1;
+	}
+	if (t2 > 0.0)
+	{
+		cy->h_check = vec3_dot(vec3_sub(vec3_add(ray.origin,
+						vec3_scale(ray.direction, t2)),
+					cy->center), cy->axis);
+		if (fabs(cy->h_check) <= cy->height / 2.0)
+			ts = min_pos(ts, t2);
+	}
+	return (ts);
+}
 
-    a = (1.0 + k) * dv * dv - dd;
-    b = 2.0 * ((1.0 + k) * dv * ov - od);
-    c = (1.0 + k) * ov * ov - oo;
-    t_side = -1.0;
-    disc = b * b - 4.0 * a * c;
-    if (disc >= 0.0 && fabs(a) > 1e-6)
-    {
-        t1 = (-b - sqrt(disc)) / (2.0 * a);
-        t2 = (-b + sqrt(disc)) / (2.0 * a);
-        if (t1 > 0.0)
-        {
-            h = ov + t1 * dv;
-            if (h >= 0.0 && h <= cone.height)
-                t_side = t1;
-        }
-        if (t2 > 0.0)
-        {
-            h = ov + t2 * dv;
-            if (h >= 0.0 && h <= cone.height)
-                t_side = min_pos(t_side, t2);
-        }
-    }
-    base_center = vec3_add(cone.tip, vec3_scale(axis, cone.height));
-    t_base = inter_cap(ray, base_center, axis, cone.radius);
-    return (min_pos(t_side, t_base));
+double	inter_cylinder(t_ray ray, t_cylinder cy)
+{
+	double	ts;
+	double	tc1;
+	double	tc2;
+	t_vec3	cb;
+	t_vec3	ct;
+
+	setup_cyl(ray, &cy);
+	ts = -1;
+	if (disc_cyl(&cy) >= 0.0 && fabs(cy.a) > 1e-6)
+		ts = test_side(ray, &cy);
+	cb = vec3_sub(cy.center, vec3_scale(cy.axis, cy.height / 2.0));
+	ct = vec3_add(cy.center, vec3_scale(cy.axis, cy.height / 2.0));
+	tc1 = inter_cap(ray, cb, vec3_scale(cy.axis, -1.0), cy.radius);
+	tc2 = inter_cap(ray, ct, cy.axis, cy.radius);
+	return (min_pos(ts, min_pos(tc1, tc2)));
+}
+
+static void	setup_cone(t_ray ray, t_cone *co)
+{
+	co->axis = vec3_norm(co->axis);
+	co->oc = vec3_sub(ray.origin, co->tip);
+	co->k = co->radius / co->height;
+	co->k = co->k * co->k;
+	co->dv = vec3_dot(ray.direction, co->axis);
+	co->ov = vec3_dot(co->oc, co->axis);
+	co->dd = vec3_dot(ray.direction, ray.direction);
+	co->od = vec3_dot(co->oc, ray.direction);
+	co->oo = vec3_dot(co->oc, co->oc);
+}
+
+static double	disc_cone(t_cone *co)
+{
+	co->a = (1.0 + co->k) * co->dv * co->dv - co->dd;
+	co->b = 2.0 * ((1.0 + co->k) * co->dv * co->ov - co->od);
+	co->c = (1.0 + co->k) * co->ov * co->ov - co->oo;
+	co->disc = co->b * co->b - 4.0 * co->a * co->c;
+	return (co->disc);
+}
+
+static double	test_cone_side(t_cone *co)
+{
+	double	t1;
+	double	t2;
+	double	ts;
+	double	sqrt_d;
+
+	ts = -1;
+	sqrt_d = sqrt(co->disc);
+	t1 = (-co->b - sqrt_d) / (2.0 * co->a);
+	t2 = (-co->b + sqrt_d) / (2.0 * co->a);
+	if (t1 > 0.0)
+	{
+		co->h = co->ov + t1 * co->dv;
+		if (co->h >= 0.0 && co->h <= co->height)
+			ts = t1;
+	}
+	if (t2 > 0.0)
+	{
+		co->h = co->ov + t2 * co->dv;
+		if (co->h >= 0.0 && co->h <= co->height)
+			ts = min_pos(ts, t2);
+	}
+	return (ts);
+}
+
+double	inter_cone(t_ray ray, t_cone co)
+{
+	double	ts;
+	double	tb;
+	t_vec3	bc;
+
+	setup_cone(ray, &co);
+	ts = -1;
+	if (disc_cone(&co) >= 0.0 && fabs(co.a) > 1e-6)
+		ts = test_cone_side(&co);
+	bc = vec3_add(co.tip, vec3_scale(co.axis, co.height));
+	tb = inter_cap(ray, bc, co.axis, co.radius);
+	return (min_pos(ts, tb));
 }

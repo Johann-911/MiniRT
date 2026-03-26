@@ -44,6 +44,15 @@ typedef struct s_cylinder
 	double radius;
 	double height;
 	t_rgb color;
+	t_vec3 axis;
+	t_vec3 oc;
+	t_vec3 proj_dir;
+	t_vec3 proj_oc;
+	double a;
+	double b;
+	double c;
+	double disc;
+	double h_check;
 }t_cylinder;
 
 typedef struct s_triangle
@@ -61,6 +70,18 @@ typedef struct s_cone
 	double	radius;
 	double	height;
 	t_rgb	color;
+	t_vec3	oc;
+	double	k;
+	double	dv;
+	double	ov;
+	double	dd;
+	double	od;
+	double	oo;
+	double	a;
+	double	b;
+	double	c;
+	double	disc;
+	double	h;
 }t_cone;
 
 typedef struct s_light

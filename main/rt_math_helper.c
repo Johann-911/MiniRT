@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt_math_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
+/*   By: stephan <stephan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 21:16:14 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/25 15:17:30 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/26 10:35:57 by stephan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,5 +76,25 @@ double	ft_atod(const char *str)
         i++;
     }
     return (sign * res);
+}
+
+t_vec3	perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren, double freq)
+{
+    t_vec3	n;
+    t_vec3	u;
+    t_vec3	v;
+    double	nx;
+    double	ny;
+
+    n = vec3_norm(base_n);
+    if (fabs(n.x) < 0.9)
+        u = vec3_norm(vec3_cross(vec3(1.0, 0.0, 0.0), n));
+    else
+        u = vec3_norm(vec3_cross(vec3(0.0, 1.0, 0.0), n));
+    v = vec3_cross(n, u);
+    nx = sin(p_local.x * freq) * cos(p_local.y * freq);
+    ny = cos(p_local.z * freq) * sin(p_local.y * freq);
+    return (vec3_norm(vec3_add(n, vec3_add(vec3_mul(u, nx * stren),
+                vec3_mul(v, ny * stren)))));
 }
 
