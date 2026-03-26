@@ -1,5 +1,5 @@
-#include "../inc/window.h"
 #include "../inc/parser.h"
+#include "../inc/window.h"
 
 void	put_pixel(char *data, int x, int y, int color, int bpp, int line)
 {

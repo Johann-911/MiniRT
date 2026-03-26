@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdint.h>
 
-
 int	clamp_int(int val, int lo, int hi)
 {
 	if (val < lo)
@@ -22,7 +21,8 @@ int	rgb_to_int(int r, int g, int b)
 
 t_rgb	int_to_rgb(int color)
 {
-	t_rgb c;
+	t_rgb	c;
+
 	c.r = (color >> 16) & 0xFF;
 	c.g = (color >> 8) & 0xFF;
 	c.b = color & 0xFF;
@@ -31,9 +31,9 @@ t_rgb	int_to_rgb(int color)
 
 int	rgb_scale_int(int color, double factor)
 {
-	t_rgb c;
-	int	r, g, b;
+	t_rgb	c;
 
+	int r, g, b;
 	if (factor < 0.0)
 		factor = 0.0;
 	if (factor > 1.0)
@@ -44,4 +44,3 @@ int	rgb_scale_int(int color, double factor)
 	b = (int)(c.b * factor);
 	return (rgb_to_int(r, g, b));
 }
-

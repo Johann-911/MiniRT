@@ -1,5 +1,5 @@
-#include "../inc/window.h"
 #include "../inc/parser.h"
+#include "../inc/window.h"
 #include <fcntl.h>
 #include <sys/time.h>
 
@@ -13,12 +13,12 @@ static long	current_time_ms(void)
 
 int	render_loop(void *param)
 {
-	t_app		*app;
-	static long	last_sample = 0;
-	static int	frames = 0;
+	t_app			*app;
+	static long		last_sample = 0;
+	static int		frames = 0;
 	static double	fps = 0.0;
-	long		now;
-	char		fps_text[32];
+	long			now;
+	char			fps_text[32];
 
 	app = (t_app *)param;
 	now = current_time_ms();
@@ -40,9 +40,9 @@ int	render_loop(void *param)
 
 int	main(int ac, char **av)
 {
-	t_app app;
-	int fd;
-	t_scene scene;
+	t_app	app;
+	int		fd;
+	t_scene	scene;
 
 	if (ac != 2)
 		return (perror("Wrong Usage. ./miniRT <input_file.rt>"), 1);
@@ -85,7 +85,6 @@ int	main(int ac, char **av)
 	}
 	app.scene = &scene;
 	render_scene(&app, &scene);
-	
 	mlx_hook(app.win, 2, 1L << 0, handle_key, &app);
 	mlx_hook(app.win, 17, 0, handle_close, &app);
 	mlx_loop(app.mlx);

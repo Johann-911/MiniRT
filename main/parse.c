@@ -6,14 +6,14 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 15:32:22 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/19 00:00:00 by copilot          ###   ########.fr       */
+/*   Updated: 2026/03/26 14:14:06 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/window.h"
 #include "../inc/parser.h"
-#include <fcntl.h>
 #include "../inc/rt_math.h"
+#include "../inc/window.h"
+#include <fcntl.h>
 
 int	validate(int fd, t_scene *scene)
 {
@@ -132,8 +132,8 @@ static int	parse_int_strict(const char *s, int *out)
 	while (ft_isdigit((unsigned char)s[i]))
 	{
 		val = val * 10 + (s[i] - '0');
-		if ((sign == 1 && val > 2147483647L)
-			|| (sign == -1 && -val < -2147483648L))
+		if ((sign == 1 && val > 2147483647L) || (sign == -1 && -val <
+				-2147483648L))
 			return (1);
 		i++;
 	}
@@ -148,9 +148,8 @@ static int	parse_vec3_token(const char *token, t_vec3 *out)
 	parts = ft_split(token, ',');
 	if (!parts || token_count(parts) != 3)
 		return (free_split(parts), 1);
-	if (parse_double_strict(parts[0], &out->x)
-		|| parse_double_strict(parts[1], &out->y)
-		|| parse_double_strict(parts[2], &out->z))
+	if (parse_double_strict(parts[0], &out->x) || parse_double_strict(parts[1],
+			&out->y) || parse_double_strict(parts[2], &out->z))
 		return (free_split(parts), 1);
 	free_split(parts);
 	return (0);
@@ -163,13 +162,12 @@ static int	parse_rgb_token(const char *token, t_rgb *out)
 	parts = ft_split(token, ',');
 	if (!parts || token_count(parts) != 3)
 		return (free_split(parts), 1);
-	if (parse_int_strict(parts[0], &out->r)
-		|| parse_int_strict(parts[1], &out->g)
-		|| parse_int_strict(parts[2], &out->b))
+	if (parse_int_strict(parts[0], &out->r) || parse_int_strict(parts[1],
+			&out->g) || parse_int_strict(parts[2], &out->b))
 		return (free_split(parts), 1);
 	free_split(parts);
-	if (out->r < 0 || out->r > 255 || out->g < 0 || out->g > 255
-		|| out->b < 0 || out->b > 255)
+	if (out->r < 0 || out->r > 255 || out->g < 0 || out->g > 255 || out->b < 0
+		|| out->b > 255)
 		return (1);
 	return (0);
 }
@@ -257,6 +255,7 @@ int	valid_light(char *line, t_scene *scene)
 {
 	char	**tokens;
 	t_light	*new_light;
+		t_light *cur;
 
 	tokens = split_tokens(line);
 	if (!tokens || token_count(tokens) != 4)
@@ -266,16 +265,13 @@ int	valid_light(char *line, t_scene *scene)
 		return (free_split(tokens), 1);
 	new_light->next = NULL;
 	if (parse_double_strict(tokens[2], &new_light->b)
-		|| parse_vec3_token(tokens[1], &new_light->pos)
-		|| new_light->b < 0.0 || new_light->b > 1.0
-		|| parse_rgb_token(tokens[3], &new_light->color))
+		|| parse_vec3_token(tokens[1], &new_light->pos) || new_light->b < 0.0
+		|| new_light->b > 1.0 || parse_rgb_token(tokens[3], &new_light->color))
 		return (free(new_light), free_split(tokens), 1);
 	if (!scene->light)
 		scene->light = new_light;
 	else
 	{
-		t_light	*cur;
-
 		cur = scene->light;
 		while (cur->next)
 			cur = cur->next;
@@ -322,10 +318,9 @@ int	valid_sphere(char *line, t_scene *scene)
 	new->type = OBJ_SPHERE;
 	new->next = NULL;
 	if (parse_flags(tokens, count, 4, new))
-        return (free(new), free_split(tokens), 1);
-	if (parse_double_strict(tokens[2], &diameter)
-		|| parse_vec3_token(tokens[1], &new->data.sphere.center)
-		|| diameter <= 0.0
+		return (free(new), free_split(tokens), 1);
+	if (parse_double_strict(tokens[2], &diameter) || parse_vec3_token(tokens[1],
+			&new->data.sphere.center) || diameter <= 0.0
 		|| parse_rgb_token(tokens[3], &new->data.sphere.color))
 		return (free(new), free_split(tokens), 1);
 	new->data.sphere.r = diameter / 2.0;
@@ -351,7 +346,7 @@ int	valid_plane(char *line, t_scene *scene)
 	new->type = OBJ_PLANE;
 	new->next = NULL;
 	if (parse_flags(tokens, count, 4, new))
-        return (free(new), free_split(tokens), 1);
+		return (free(new), free_split(tokens), 1);
 	if (parse_vec3_token(tokens[1], &new->data.plane.point)
 		|| parse_dir_token(tokens[2], &new->data.plane.normal)
 		|| parse_rgb_token(tokens[3], &new->data.plane.color))
@@ -379,13 +374,12 @@ int	valid_cylinder(char *line, t_scene *scene)
 	new->type = OBJ_CYLINDER;
 	new->next = NULL;
 	if (parse_flags(tokens, count, 6, new))
-        return (free(new), free_split(tokens), 1);
+		return (free(new), free_split(tokens), 1);
 	if (parse_double_strict(tokens[3], &diameter)
 		|| parse_double_strict(tokens[4], &new->data.cylinder.height)
 		|| parse_vec3_token(tokens[1], &new->data.cylinder.center)
 		|| parse_dir_token(tokens[2], &new->data.cylinder.vector)
-		|| diameter <= 0.0
-		|| new->data.cylinder.height <= 0.0
+		|| diameter <= 0.0 || new->data.cylinder.height <= 0.0
 		|| parse_rgb_token(tokens[5], &new->data.cylinder.color))
 		return (free(new), free_split(tokens), 1);
 	new->data.cylinder.radius = diameter / 2.0;
@@ -412,14 +406,13 @@ int	valid_cone(char *line, t_scene *scene)
 	new->type = OBJ_CONE;
 	new->next = NULL;
 	if (parse_flags(tokens, count, 6, new))
-        return (free(new), free_split(tokens), 1);
+		return (free(new), free_split(tokens), 1);
 	if (parse_double_strict(tokens[3], &diameter)
 		|| parse_double_strict(tokens[4], &new->data.cone.height)
 		|| parse_vec3_token(tokens[1], &new->data.cone.tip)
-		|| parse_dir_token(tokens[2], &new->data.cone.axis)
-		|| diameter <= 0.0
-		|| new->data.cone.height <= 0.0
-		|| parse_rgb_token(tokens[5], &new->data.cone.color))
+		|| parse_dir_token(tokens[2], &new->data.cone.axis) || diameter <= 0.0
+		|| new->data.cone.height <= 0.0 || parse_rgb_token(tokens[5],
+			&new->data.cone.color))
 		return (free(new), free_split(tokens), 1);
 	new->data.cone.radius = diameter / 2.0;
 	add_object(scene, new);
