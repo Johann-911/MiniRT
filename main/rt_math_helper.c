@@ -43,41 +43,6 @@ t_vec3	vec3_norm(t_vec3 v)
 	return (vec3_mul(v, 1.0 / l));
 }
 
-double	ft_atod(const char *str)
-{
-    size_t	i;
-    double	res;
-    double	sign;
-    double	div;
-
-    i = 0;
-    res = 0.0;
-    sign = 1.0;
-    div = 10.0;
-    while (str[i] && ((str[i] >= 9 && str[i] <= 13) || str[i] == ' '))
-        i++;
-    if (str[i] == '-' || str[i] == '+')
-    {
-        if (str[i] == '-')
-            sign = -1.0;
-        i++;
-    }
-    while (str[i] >= '0' && str[i] <= '9')
-    {
-        res = res * 10.0 + (double)(str[i] - '0');
-        i++;
-    }
-    if (str[i] == '.')
-        i++;
-    while (str[i] >= '0' && str[i] <= '9')
-    {
-        res += (double)(str[i] - '0') / div;
-        div *= 10.0;
-        i++;
-    }
-    return (sign * res);
-}
-
 t_vec3	perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren, double freq)
 {
     t_vec3	n;
@@ -97,4 +62,3 @@ t_vec3	perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren, double freq)
     return (vec3_norm(vec3_add(n, vec3_add(vec3_mul(u, nx * stren),
                 vec3_mul(v, ny * stren)))));
 }
-

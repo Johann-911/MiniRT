@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
+/*   By: jtoumani <jtoumani@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/24 17:53:23 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/16 20:20:51 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/26 12:30:22 by jtoumani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "../GNL/get_next_line.h"
 #include "../Printf/Libft/libft.h"

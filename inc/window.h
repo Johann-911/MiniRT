@@ -40,6 +40,9 @@ t_ray	generate_ray(t_scene *scene, t_app *app, int x, int y);
 int     shade_hit(t_scene *scene, t_hit hit, t_vec3 cam_pos);;
 void	render_scene(t_app *app, t_scene *scene);
 int     is_in_shadow(t_scene *scene, t_hit hit, t_light *light);
+t_vec3	color_mul(t_vec3 a, t_vec3 b);
+t_rgb	rgb_from_color(t_vec3 c);
+t_vec3	color_from_rgb(t_rgb c);
 
 
 #endif 

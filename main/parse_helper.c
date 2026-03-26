@@ -106,38 +106,3 @@ char	**split_tokens(const char *line)
     free(clean);
     return (tokens);
 }
-
-int ft_isspace(char c)
-{
-    if (c == ' ' || c == '\t' || c == '\n'
-        || c == '\r' || c == '\v' || c == '\f')
-        return (1);
-    return (0);
-}
-
-int	parse_flags(char **tokens, int count, int base, t_object *obj)
-{
-    int i;
-
-    obj->checker = 0;
-    obj->bump = 0;
-    if (count == base)
-        return (0);
-    if (count != base + 2 && count != base + 4)
-        return (1);
-    i = base;
-    while (i < count)
-    {
-        if (ft_strncmp(tokens[i], "cb", 2) == 0 && tokens[i][2] == '\0')
-        {
-            if (ft_strncmp(tokens[i + 1], "true", 4) != 0
-                || tokens[i + 1][4] != '\0')
-                return (1);
-            obj->checker = 1;
-        }
-        else
-            return (1);
-        i = i + 2;
-    }
-    return (0);
-}

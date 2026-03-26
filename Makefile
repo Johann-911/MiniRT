@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stliu <stliu@student.42.fr>                +#+  +:+       +#+         #
+#    By: jtoumani <jtoumani@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/24 00:00:00 by stliu             #+#    #+#              #
-#    Updated: 2026/03/25 15:40:20 by stliu            ###   ########.fr        #
+#    Updated: 2026/03/26 12:18:18 by jtoumani         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,17 +31,21 @@ LIBFT		= $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS	= -L$(LIBFT_DIR) -lft
 MLX_DIR		= "minilibx-linux"
 MLX			= $(MLX_DIR)/libmlx.a
-MLX_FLAGS	= -L$(MLX_DIR) -lmlx -L/usr/lib -lXext -lX11 -lm -lz
+MLX_FLAGS	= -L$(MLX_DIR) -lmlx -L/usr/lib -lXext -lX11 -lm 
 
 # Source files
 SRCS		= $(SRC_DIR)/main.c \
 			  $(SRC_DIR)/parse.c \
 			  $(SRC_DIR)/colours.c \
 			  $(SRC_DIR)/intersection.c \
+			  $(SRC_DIR)/intersection_obj.c \
 			  $(SRC_DIR)/ray_gen.c \
-			  $(SRC_DIR)/bump_mapping.c \
+			  $(SRC_DIR)/ray_gen_helper.c \
+			  $(SRC_DIR)/ray_gen_helper2.c \
 			  $(SRC_DIR)/rt_math.c \
 			  $(SRC_DIR)/rt_math_helper.c \
+			  $(SRC_DIR)/norm_obj.c \
+			  $(SRC_DIR)/make_window.c \
 			  $(SRC_DIR)/parse_helper.c \
 			  $(GNL_DIR)/get_next_line.c \
 			  $(GNL_DIR)/get_next_line_utils.c \
