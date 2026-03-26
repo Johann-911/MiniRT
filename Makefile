@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jtoumani <jtoumani@student.42heilbronn.    +#+  +:+       +#+         #
+#    By: stliu <stliu@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/24 00:00:00 by stliu             #+#    #+#              #
-#    Updated: 2026/03/26 12:18:18 by jtoumani         ###   ########.fr        #
+#    Updated: 2026/03/26 14:31:47 by stliu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,12 +41,12 @@ SRCS		= $(SRC_DIR)/main.c \
 			  $(SRC_DIR)/intersection_obj.c \
 			  $(SRC_DIR)/ray_gen.c \
 			  $(SRC_DIR)/ray_gen_helper.c \
-			  $(SRC_DIR)/ray_gen_helper2.c \
 			  $(SRC_DIR)/rt_math.c \
 			  $(SRC_DIR)/rt_math_helper.c \
 			  $(SRC_DIR)/norm_obj.c \
 			  $(SRC_DIR)/make_window.c \
 			  $(SRC_DIR)/parse_helper.c \
+			  $(SRC_DIR)/parser_helper_2.c \
 			  $(GNL_DIR)/get_next_line.c \
 			  $(GNL_DIR)/get_next_line_utils.c \
 			  

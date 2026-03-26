@@ -186,13 +186,24 @@ t_vec3	norm_sphere(t_vec3 point, t_sphere *sphere);
 t_vec3	norm_plane(t_plane *plane);
 t_vec3	normal_cylinder(t_vec3 point, t_cylinder *cylinder);
 t_vec3  normal_cone(t_vec3 point, t_cone *cone);
+void	set_normal(t_hit *result, t_object *obj, t_vec3 hit_point);
 
-//bump mapping 
+// cone
+void	setup_cone(t_ray ray, t_cone *co);
+double	disc_cone(t_cone *co);
+double	test_cone_side(t_cone *co);
+double	inter_cone(t_ray ray, t_cone co);
 
+// cylinder
+void	setup_cyl(t_ray ray, t_cylinder *cy);
+double	disc_cyl(t_cylinder *cy);
+double	test_side(t_ray ray, t_cylinder *cy);
+
+
+double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius);
+double	min_pos(double t1, double t2);
 t_vec3	perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren, double freq);
-t_vec3	bump_gradient(t_vec3 p, double freq);
-int	parse_flags(char **tokens, int count, int base, t_object *obj);
-int	parse_bump_flag(char **tokens, int count, int base, t_object *obj);
+
 
 
 #endif

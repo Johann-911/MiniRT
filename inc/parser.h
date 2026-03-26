@@ -38,6 +38,7 @@ int valid_sphere(char *line, t_scene *scene);
 int valid_plane(char *line, t_scene *scene);
 int valid_cylinder(char *line, t_scene *scene);
 int valid_cone(char *line, t_scene *scene);
+int	parse_flags(char **tokens, int count, int base, t_object *obj);
 double	ft_atod(const char *str);
 void	init_scene(t_scene *scene);
 void	add_object(t_scene *scene, t_object *new);

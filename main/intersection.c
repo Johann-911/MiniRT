@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 14:43:39 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/26 14:13:31 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/26 14:26:17 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ int	any_hit_before(t_ray ray, t_scene *scene, double max_t)
 
 /*     intersections: side, top and bottom cap    */
 
-static void	setup_cyl(t_ray ray, t_cylinder *cy)
+void	setup_cyl(t_ray ray, t_cylinder *cy)
 {
 	cy->axis = vec3_norm(cy->vector);
 	cy->oc = vec3_sub(ray.origin, cy->center);
@@ -255,7 +255,7 @@ static void	setup_cyl(t_ray ray, t_cylinder *cy)
 					cy->axis)));
 }
 
-static double	disc_cyl(t_cylinder *cy)
+double	disc_cyl(t_cylinder *cy)
 {
 	cy->a = vec3_dot(cy->proj_dir, cy->proj_dir);
 	cy->b = 2.0 * vec3_dot(cy->proj_oc, cy->proj_dir);
@@ -264,7 +264,7 @@ static double	disc_cyl(t_cylinder *cy)
 	return (cy->disc);
 }
 
-static double	test_side(t_ray ray, t_cylinder *cy)
+double	test_side(t_ray ray, t_cylinder *cy)
 {
 	double	t1;
 	double	t2;
@@ -292,7 +292,7 @@ static double	test_side(t_ray ray, t_cylinder *cy)
 	return (ts);
 }
 
-static void	setup_cone(t_ray ray, t_cone *co)
+void	setup_cone(t_ray ray, t_cone *co)
 {
 	co->axis = vec3_norm(co->axis);
 	co->oc = vec3_sub(ray.origin, co->tip);
@@ -305,7 +305,7 @@ static void	setup_cone(t_ray ray, t_cone *co)
 	co->oo = vec3_dot(co->oc, co->oc);
 }
 
-static double	disc_cone(t_cone *co)
+double	disc_cone(t_cone *co)
 {
 	co->a = (1.0 + co->k) * co->dv * co->dv - co->dd;
 	co->b = 2.0 * ((1.0 + co->k) * co->dv * co->ov - co->od);
@@ -314,7 +314,7 @@ static double	disc_cone(t_cone *co)
 	return (co->disc);
 }
 
-static double	test_cone_side(t_cone *co)
+double	test_cone_side(t_cone *co)
 {
 	double	t1;
 	double	t2;
