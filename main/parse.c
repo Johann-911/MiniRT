@@ -255,7 +255,7 @@ int	valid_light(char *line, t_scene *scene)
 {
 	char	**tokens;
 	t_light	*new_light;
-		t_light *cur;
+	t_light	*cur;
 
 	tokens = split_tokens(line);
 	if (!tokens || token_count(tokens) != 4)
