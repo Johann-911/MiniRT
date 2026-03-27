@@ -38,7 +38,7 @@ int	parse_flags(char **tokens, int count, int base, t_object *obj)
 		if (ft_strncmp(tokens[i], "cb", 2) == 0 && tokens[i][2] == '\0')
 		{
 			if (ft_strncmp(tokens[i + 1], "true", 4) != 0 || tokens[i
-				+ 1][4] != '\0')
+					+ 1][4] != '\0')
 				return (1);
 			obj->checker = 1;
 		}

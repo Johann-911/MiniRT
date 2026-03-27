@@ -67,11 +67,11 @@ t_vec3	normal_cylinder(t_vec3 point, t_cylinder *cylinder)
 
 t_vec3	normal_cone(t_vec3 point, t_cone *cone)
 {
-	t_vec3 axis;
-	t_vec3 to_point;
-	t_vec3 radial;
-	double proj_len;
-	double k;
+	t_vec3	axis;
+	t_vec3	to_point;
+	t_vec3	radial;
+	double	proj_len;
+	double	k;
 
 	axis = vec3_norm(cone->axis);
 	to_point = vec3_sub(point, cone->tip);

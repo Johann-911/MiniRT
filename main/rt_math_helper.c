@@ -25,6 +25,7 @@ double	vec3_len(t_vec3 v)
 {
 	return (sqrt(vec3_dot(v, v)));
 }
+
 t_vec3	vec3_mul(t_vec3 v, double scalar)
 {
 	return (vec3(v.x * scalar, v.y * scalar, v.z * scalar));
