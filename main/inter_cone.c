@@ -1,33 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   inter_cone.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/26 14:19:19 by stliu             #+#    #+#             */
+/*   Updated: 2026/03/26 14:19:21 by stliu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/parser.h"
 #include "../inc/window.h"
-
-double	test_side(t_ray ray, t_cylinder *cy)
-{
-	double	t1;
-	double	t2;
-	double	ts;
-	double	sqrt_d;
-
-	ts = -1;
-	sqrt_d = sqrt(cy->disc);
-	t1 = (-cy->b - sqrt_d) / (2.0 * cy->a);
-	t2 = (-cy->b + sqrt_d) / (2.0 * cy->a);
-	if (t1 > 0.0)
-	{
-		cy->h_check = vec3_dot(vec3_sub(vec3_add(ray.origin,
-						vec3_scale(ray.direction, t1)), cy->center), cy->axis);
-		if (fabs(cy->h_check) <= cy->height / 2.0)
-			ts = t1;
-	}
-	if (t2 > 0.0)
-	{
-		cy->h_check = vec3_dot(vec3_sub(vec3_add(ray.origin,
-						vec3_scale(ray.direction, t2)), cy->center), cy->axis);
-		if (fabs(cy->h_check) <= cy->height / 2.0)
-			ts = min_pos(ts, t2);
-	}
-	return (ts);
-}
 
 void	setup_cone(t_ray ray, t_cone *co)
 {

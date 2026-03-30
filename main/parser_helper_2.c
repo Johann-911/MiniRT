@@ -35,10 +35,11 @@ int	parse_flags(char **tokens, int count, int base, t_object *obj)
 	i = base;
 	while (i < count)
 	{
-		if (ft_strncmp(tokens[i], "cb", 2) == 0 && tokens[i][2] == '\0')
+		if (ft_strncmp(tokens[i], "cb", 2) == 0
+			&& tokens[i][2] == '\0')
 		{
-			if (ft_strncmp(tokens[i + 1], "true", 4) != 0 || tokens[i
-					+ 1][4] != '\0')
+			if (ft_strncmp(tokens[i + 1], "true", 4) != 0
+				|| tokens[i + 1][4] != '\0')
 				return (1);
 			obj->checker = 1;
 		}
@@ -49,6 +50,20 @@ int	parse_flags(char **tokens, int count, int base, t_object *obj)
 	return (0);
 }
 
+static void	ft_atod_init(const char *str, size_t *i, double *sign)
+{
+	*i = 0;
+	*sign = 1.0;
+	while (str[*i] && ((str[*i] >= 9 && str[*i] <= 13) || str[*i] == ' '))
+		(*i)++;
+	if (str[*i] == '-' || str[*i] == '+')
+	{
+		if (str[*i] == '-')
+			*sign = -1.0;
+		(*i)++;
+	}
+}
+
 double	ft_atod(const char *str)
 {
 	size_t	i;
@@ -56,18 +71,9 @@ double	ft_atod(const char *str)
 	double	sign;
 	double	div;
 
-	i = 0;
+	ft_atod_init(str, &i, &sign);
 	res = 0.0;
-	sign = 1.0;
 	div = 10.0;
-	while (str[i] && ((str[i] >= 9 && str[i] <= 13) || str[i] == ' '))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1.0;
-		i++;
-	}
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		res = res * 10.0 + (double)(str[i] - '0');

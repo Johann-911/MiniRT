@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rt_math.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/26 14:17:34 by stliu             #+#    #+#             */
+/*   Updated: 2026/03/26 14:17:37 by stliu            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef RT_MATH_H
 # define RT_MATH_H
 
@@ -34,7 +46,6 @@ typedef struct s_plane
 	t_vec3			point;
 	t_vec3			normal;
 	t_rgb			color;
-
 }					t_plane;
 
 typedef struct s_cylinder
@@ -159,6 +170,15 @@ typedef struct s_hit
 	int				hit;
 }					t_hit;
 
+typedef struct s_cam
+{
+	t_vec3			forward;
+	t_vec3			right;
+	t_vec3			up;
+	double			aspect;
+	double			fov_scale;
+}					t_cam;
+
 t_vec3				vec3(double x, double y, double z);
 t_vec3				vec3_add(t_vec3 a, t_vec3 b);
 t_vec3				vec3_sub(t_vec3 a, t_vec3 b);
@@ -171,34 +191,54 @@ double				ft_atod(const char *str);
 t_hit				closest_hit(t_ray ray, t_scene *scene);
 int					any_hit_before(t_ray ray, t_scene *scene, double max_t);
 
-// intersection functions
+/*
+** intersection functions
+*/
 double				inter_sphere(t_ray ray, t_sphere sphere);
 double				inter_plane(t_ray ray, t_plane plane);
 double				inter_cylinder(t_ray ray, t_cylinder cylinder);
 double				inter_cone(t_ray ray, t_cone cone);
 
-// normal functions
+/*
+** normal functions
+*/
 t_vec3				norm_sphere(t_vec3 point, t_sphere *sphere);
 t_vec3				norm_plane(t_plane *plane);
 t_vec3				normal_cylinder(t_vec3 point, t_cylinder *cylinder);
 t_vec3				normal_cone(t_vec3 point, t_cone *cone);
 void				set_normal(t_hit *result, t_object *obj, t_vec3 hit_point);
 
-// cone
+/*
+** cone helpers
+*/
 void				setup_cone(t_ray ray, t_cone *co);
 double				disc_cone(t_cone *co);
 double				test_cone_side(t_cone *co);
-double				inter_cone(t_ray ray, t_cone co);
 
-// cylinder
+/*
+** cylinder helpers
+*/
 void				setup_cyl(t_ray ray, t_cylinder *cy);
 double				disc_cyl(t_cylinder *cy);
 double				test_side(t_ray ray, t_cylinder *cy);
 
-double				inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm,
-						double radius);
+/*
+** intersection helpers
+*/
+double				inter_cap(t_ray ray, t_vec3 cap_center,
+						t_vec3 cap_norm, double radius);
 double				min_pos(double t1, double t2);
-t_vec3				perturb_normal(t_vec3 base_n, t_vec3 p_local, double stren,
-						double freq);
+t_vec3				perturb_normal(t_vec3 base_n, t_vec3 p_local,
+						double stren, double freq);
+
+/*
+** checker and hit functions
+*/
+t_rgb				checker_planar(t_vec3 p);
+t_rgb				checker_sphere(t_vec3 n);
+t_rgb				checker_cylinder(t_vec3 p, t_cylinder *cy);
+void				set_color(t_hit *result, t_object *obj, t_vec3 hp,
+						t_vec3 normal);
+double				get_dist(t_ray ray, t_object *obj);
 
 #endif

@@ -44,8 +44,10 @@ t_rgb	int_to_rgb(int color)
 int	rgb_scale_int(int color, double factor)
 {
 	t_rgb	c;
+	int		r;
+	int		g;
+	int		b;
 
-	int r, g, b;
 	if (factor < 0.0)
 		factor = 0.0;
 	if (factor > 1.0)

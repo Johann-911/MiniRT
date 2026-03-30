@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_helper.c                                     :+:      :+:    :+:   */
+/*   parse_token.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -57,12 +57,17 @@ int	token_count(char **tokens)
 	return (count);
 }
 
+static void	skip_spaces(const char *s, int *i)
+{
+	while (s[++(*i)] && ft_isspace(s[*i]))
+		;
+}
+
 char	*cleanup_line(const char *line)
 {
 	char	*out;
 	int		i;
 	int		j;
-	int		next;
 
 	out = malloc(ft_strlen(line) + 1);
 	if (!out)
@@ -73,17 +78,11 @@ char	*cleanup_line(const char *line)
 	{
 		if (ft_isspace(line[i]))
 		{
-			next = i;
-			while (line[next] && ft_isspace(line[next]))
-				next++;
-			if ((j > 0 && out[j - 1] == ',') || line[next] == ',')
-			{
-				i = next;
+			skip_spaces(line, &i);
+			if ((j > 0 && out[j - 1] == ',') || line[i] == ',')
 				continue ;
-			}
 			if (j > 0 && out[j - 1] != ' ')
 				out[j++] = ' ';
-			i = next;
 			continue ;
 		}
 		out[j++] = line[i++];

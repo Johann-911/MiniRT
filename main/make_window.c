@@ -13,11 +13,11 @@
 #include "../inc/parser.h"
 #include "../inc/window.h"
 
-void	put_pixel(char *data, int x, int y, int color, int bpp, int line)
+void	put_pixel(char *data, int x, int y, int color)
 {
 	int	offset;
 
-	offset = y * line + x * (bpp / 8);
+	offset = y * WIDTH * 4 + x * 4;
 	*(int *)(data + offset) = color;
 }
 

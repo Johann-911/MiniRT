@@ -27,6 +27,7 @@ t_vec3	color_from_rgb(t_rgb c)
 {
 	return (vec3(c.r / 255.0, c.g / 255.0, c.b / 255.0));
 }
+
 t_vec3	color_mul(t_vec3 a, t_vec3 b)
 {
 	return (vec3(a.x * b.x, a.y * b.y, a.z * b.z));

@@ -36,16 +36,27 @@ MLX_FLAGS	= -L$(MLX_DIR) -lmlx -L/usr/lib -lXext -lX11 -lm
 # Source files
 SRCS		= $(SRC_DIR)/main.c \
 			  $(SRC_DIR)/parse.c \
+			  $(SRC_DIR)/parse_num.c \
+			  $(SRC_DIR)/parse_vec.c \
+			  $(SRC_DIR)/parse_id.c \
+			  $(SRC_DIR)/parse_light.c \
+			  $(SRC_DIR)/parse_sphere.c \
+			  $(SRC_DIR)/parse_cyl.c \
+			  $(SRC_DIR)/parse_token.c \
 			  $(SRC_DIR)/colours.c \
 			  $(SRC_DIR)/intersection.c \
 			  $(SRC_DIR)/intersection_obj.c \
+			  $(SRC_DIR)/inter_cone.c \
+			  $(SRC_DIR)/inter_cap.c \
+			  $(SRC_DIR)/hit.c \
 			  $(SRC_DIR)/ray_gen.c \
 			  $(SRC_DIR)/ray_gen_helper.c \
+			  $(SRC_DIR)/camera.c \
+			  $(SRC_DIR)/render.c \
 			  $(SRC_DIR)/rt_math.c \
 			  $(SRC_DIR)/rt_math_helper.c \
 			  $(SRC_DIR)/norm_obj.c \
 			  $(SRC_DIR)/make_window.c \
-			  $(SRC_DIR)/parse_helper.c \
 			  $(SRC_DIR)/parser_helper_2.c \
 			  $(GNL_DIR)/get_next_line.c \
 			  $(GNL_DIR)/get_next_line_utils.c \

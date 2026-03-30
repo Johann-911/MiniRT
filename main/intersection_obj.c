@@ -69,23 +69,22 @@ double	inter_sphere(t_ray ray, t_sphere sphere)
 	double	a;
 	double	b;
 	double	c;
-	double	disc;
 	double	t1;
-	double	t2;
 
 	dis = vec3_sub(ray.origin, sphere.center);
 	a = vec3_dot(ray.direction, ray.direction);
 	b = 2.0 * vec3_dot(dis, ray.direction);
 	c = vec3_dot(dis, dis) - sphere.r * sphere.r;
-	disc = b * b - 4.0 * a * c;
-	if (disc < 0.0 || fabs(a) < 1e-6)
+	t1 = b * b - 4.0 * a * c;
+	if (t1 < 0.0 || fabs(a) < 1e-6)
 		return (-1);
-	t1 = (-b - sqrt(disc)) / (2.0 * a);
-	t2 = (-b + sqrt(disc)) / (2.0 * a);
-	return (min_pos(t1, t2));
+	t1 = (-b - sqrt(t1)) / (2.0 * a);
+	c = (-b + sqrt(b * b - 4.0 * a * c)) / (2.0 * a);
+	return (min_pos(t1, c));
 }
 
-double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm, double radius)
+double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm,
+		double radius)
 {
 	t_plane	cap;
 	t_vec3	hit;
