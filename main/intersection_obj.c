@@ -82,23 +82,3 @@ double	inter_sphere(t_ray ray, t_sphere sphere)
 	c = (-b + sqrt(b * b - 4.0 * a * c)) / (2.0 * a);
 	return (min_pos(t1, c));
 }
-
-double	inter_cap(t_ray ray, t_vec3 cap_center, t_vec3 cap_norm,
-		double radius)
-{
-	t_plane	cap;
-	t_vec3	hit;
-	t_vec3	diff;
-	double	t;
-
-	cap.point = cap_center;
-	cap.normal = cap_norm;
-	t = inter_plane(ray, cap);
-	if (t < 0)
-		return (-1);
-	hit = vec3_add(ray.origin, vec3_scale(ray.direction, t));
-	diff = vec3_sub(hit, cap_center);
-	if (vec3_len(diff) > radius)
-		return (-1);
-	return (t);
-}
