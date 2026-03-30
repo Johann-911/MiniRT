@@ -6,61 +6,35 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 19:52:54 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/26 14:14:01 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/30 17:48:21 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/parser.h"
-#include "../inc/rt_math.h"
-#include "../inc/window.h"
-#include <fcntl.h>
-
-void	free_split(char **split)
-{
-	int	i;
-
-	if (!split)
-		return ;
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
-
-void	add_object(t_scene *scene, t_object *new_obj)
-{
-	t_object	*cur;
-
-	if (!scene->objects)
-	{
-		scene->objects = new_obj;
-		return ;
-	}
-	cur = scene->objects;
-	while (cur->next)
-		cur = cur->next;
-	cur->next = new_obj;
-}
-
-int	token_count(char **tokens)
-{
-	int	count;
-
-	count = 0;
-	if (!tokens)
-		return (0);
-	while (tokens[count])
-		count++;
-	return (count);
-}
 
 static void	skip_spaces(const char *s, int *i)
 {
-	while (s[++(*i)] && ft_isspace(s[*i]))
-		;
+	while (s[(*i)] && ft_isspace(s[*i]))
+		(*i)++;
+}
+
+static int	should_insert_space(const char *out, int j, char next)
+{
+	if (!j)
+		return (0);
+	if (out[j - 1] == ' ' || out[j - 1] == ',')
+		return (0);
+	if (!next || next == ',')
+		return (0);
+	return (1);
+}
+
+static char	*finish_cleanup(char *out, int j)
+{
+	if (j && out[j - 1] == ' ')
+		j--;
+	out[j] = '\0';
+	return (out);
 }
 
 char	*cleanup_line(const char *line)
@@ -79,18 +53,15 @@ char	*cleanup_line(const char *line)
 		if (ft_isspace(line[i]))
 		{
 			skip_spaces(line, &i);
-			if ((j > 0 && out[j - 1] == ',') || line[i] == ',')
-				continue ;
-			if (j > 0 && out[j - 1] != ' ')
+			if (should_insert_space(out, j, line[i]))
 				out[j++] = ' ';
 			continue ;
 		}
+		if (line[i] == ',' && j && out[j - 1] == ' ')
+			j--;
 		out[j++] = line[i++];
 	}
-	if (j > 0 && out[j - 1] == ' ')
-		j--;
-	out[j] = '\0';
-	return (out);
+	return (finish_cleanup(out, j));
 }
 
 char	**split_tokens(const char *line)

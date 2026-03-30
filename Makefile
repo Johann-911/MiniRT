@@ -43,6 +43,7 @@ SRCS		= $(SRC_DIR)/main.c \
 			  $(SRC_DIR)/parse_sphere.c \
 			  $(SRC_DIR)/parse_cyl.c \
 			  $(SRC_DIR)/parse_token.c \
+			  $(SRC_DIR)/parse_token_utils.c \
 			  $(SRC_DIR)/colours.c \
 			  $(SRC_DIR)/intersection.c \
 			  $(SRC_DIR)/intersection_obj.c \
