@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 14:19:31 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/26 14:19:33 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/31 15:24:05 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,15 @@ int	main(int ac, char **av)
 	app.width = WIDTH;
 	app.height = HEIGHT;
 	if (init_app(&app))
+	{
+		free_scene(&scene);
 		return (1);
+	}
 	app.scene = &scene;
 	render_scene(&app, &scene);
 	mlx_hook(app.win, 2, 1L << 0, handle_key, &app);
 	mlx_hook(app.win, 17, 0, handle_close, &app);
 	mlx_loop(app.mlx);
+	free_scene(&scene);
 	return (0);
 }

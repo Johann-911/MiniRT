@@ -6,7 +6,7 @@
 #    By: stliu <stliu@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/24 00:00:00 by stliu             #+#    #+#              #
-#    Updated: 2026/03/31 14:31:28 by stliu            ###   ########.fr        #
+#    Updated: 2026/03/31 15:32:34 by stliu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME		= miniRT
 
 # Compiler and flags
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -O2 -ffast-math
+CFLAGS		= -Wall -Wextra -Werror -O2 -ffast-math -g
 INCLUDES	= -I./inc -I./Printf -I./Printf/Libft -I./minilibx-linux -I./GetNextLine
 
 # Directories
@@ -35,6 +35,7 @@ MLX_FLAGS	= -L$(MLX_DIR) -lmlx -L/usr/lib -lXext -lX11 -lm
 
 # Source files
 SRCS		= $(SRC_DIR)/main.c \
+			  $(SRC_DIR)/free.c \
 			  $(SRC_DIR)/parse.c \
 			  $(SRC_DIR)/parse_num.c \
 			  $(SRC_DIR)/parse_vec.c \

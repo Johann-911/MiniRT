@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 14:19:40 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/26 14:19:41 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/31 15:37:09 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,19 @@ void	put_pixel(char *data, int x, int y, int color)
 
 int	handle_key(int keycode, void *param)
 {
-	(void)param;
+	t_app	*app;
+
+	app = (t_app *)param;
 	if (keycode == KEY_ESC)
-		exit(0);
+		close_app(app);
 	return (0);
 }
 
 int	handle_close(void *param)
 {
-	(void)param;
-	exit(0);
+	t_app	*app;
+
+	app = (t_app *)param;
+	close_app(app);
 	return (0);
 }

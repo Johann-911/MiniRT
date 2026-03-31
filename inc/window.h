@@ -6,7 +6,7 @@
 /*   By: stliu <stliu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 14:19:40 by stliu             #+#    #+#             */
-/*   Updated: 2026/03/26 14:19:41 by stliu            ###   ########.fr       */
+/*   Updated: 2026/03/31 15:37:10 by stliu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int			handle_mouse(int button, int x, int y, void *param);
 int			handle_close(void *param);
 int			render_loop(void *param);
 void		recreate_image_and_draw(t_app *app);
+int			close_app(t_app *app);
 
 double		clamp01(double v);
 int			rgb_to_int_local(t_rgb c);

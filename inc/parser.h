@@ -45,5 +45,6 @@ void	add_object(t_scene *scene, t_object *new);
 void	free_split(char **split);
 int		token_count(char **tokens);
 char	**split_tokens(const char *line);
+void	free_scene(t_scene *scene);
 
 #endif
