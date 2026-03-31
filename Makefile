@@ -6,7 +6,7 @@
 #    By: stliu <stliu@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/24 00:00:00 by stliu             #+#    #+#              #
-#    Updated: 2026/03/26 14:31:47 by stliu            ###   ########.fr        #
+#    Updated: 2026/03/31 14:31:28 by stliu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME		= miniRT
 # Compiler and flags
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -O2 -ffast-math
-INCLUDES	= -I./inc -I./Printf -I./Printf/Libft -I"./minilibx-linux" -I./GetNextLine
+INCLUDES	= -I./inc -I./Printf -I./Printf/Libft -I./minilibx-linux -I./GetNextLine
 
 # Directories
 SRC_DIR		= main
@@ -29,7 +29,7 @@ PRINTF_FLAGS	= -L$(PRINTF_DIR) -lftprintf
 LIBFT_DIR	= $(PRINTF_DIR)/Libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 LIBFT_FLAGS	= -L$(LIBFT_DIR) -lft
-MLX_DIR		= "minilibx-linux"
+MLX_DIR		= minilibx-linux
 MLX			= $(MLX_DIR)/libmlx.a
 MLX_FLAGS	= -L$(MLX_DIR) -lmlx -L/usr/lib -lXext -lX11 -lm 
 
@@ -72,9 +72,9 @@ RED			= \033[0;31m
 RESET		= \033[0m
 
 # Rules
-all: $(NAME)
+all: $(MLX) $(NAME)
 
-$(NAME): printf libft $(MLX) $(OBJS)
+$(NAME): $(PRINTF) $(LIBFT) $(OBJS)
 	@echo "$(GREEN)Linking $(NAME)...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJS) $(PRINTF_FLAGS) $(LIBFT_FLAGS) $(MLX_FLAGS) -o $(NAME)
 	@echo "$(GREEN)$(NAME) created successfully!$(RESET)"
@@ -92,7 +92,19 @@ libft:
 	@echo "$(GREEN)Building Libft library...$(RESET)"
 	@$(MAKE) -C $(LIBFT_DIR)
 
+$(PRINTF):
+	@echo "$(GREEN)Building Printf library...$(RESET)"
+	@$(MAKE) -C $(PRINTF_DIR)
+
+$(LIBFT):
+	@echo "$(GREEN)Building Libft library...$(RESET)"
+	@$(MAKE) -C $(LIBFT_DIR)
+
 $(MLX):
+	@if [ ! -d "$(MLX_DIR)" ]; then \
+		echo "$(GREEN)Cloning MiniLibX...$(RESET)"; \
+		git clone https://github.com/42Paris/minilibx-linux.git $(MLX_DIR); \
+	fi
 	@echo "$(GREEN)Building MLX library...$(RESET)"
 	@$(MAKE) -C $(MLX_DIR)
 
@@ -101,13 +113,17 @@ clean:
 	@rm -rf $(OBJ_DIR)
 	@make -C $(PRINTF_DIR) clean
 	@make -C $(LIBFT_DIR) clean
-	@make -C $(MLX_DIR) clean
+	@if [ -d "$(MLX_DIR)" ]; then \
+		make -C $(MLX_DIR) clean; \
+	fi
 
 fclean: clean
 	@echo "$(RED)Removing $(NAME)...$(RESET)"
 	@rm -f $(NAME)
 	@make -C $(PRINTF_DIR) fclean
 	@make -C $(LIBFT_DIR) fclean
+	@echo "$(RED)Removing MiniLibX library...$(RESET)"
+	@rm -rf $(MLX_DIR)
 
 re: fclean all
 
